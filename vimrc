@@ -61,7 +61,7 @@ end
 "" Always show the file name
 set modeline
 set ls=2
-set nocursorline                " do not highlight current line
+set cursorline                  " highlight current line
 set ttyfast                     " improves redrawing for newer computers
 set wildmenu                    " show completion on the modeline
 set linespace=0
@@ -127,10 +127,6 @@ nmap <C-n> :NERDTreeToggle<cr>
 
 " C-c send enter in insert mode
 imap <C-c> <CR><Esc>O
-
-" without these two lines, vim scrolling is really slow
-set nocursorcolumn
-set nocursorline
 
 cnoreabbrev W w
 cnoreabbrev Q q
@@ -229,13 +225,3 @@ let g:vroom_map_keys = 0
 nmap <leader>r :VroomRunNearestTest<cr>
 nmap <leader>R :VroomRunTestFile<cr>
 
-
-" Filter the quickfix window by pattern
-" http://dhruvasagar.com/2013/12/17/vim-filter-quickfix-list
-" :QFilter pattern  - filters the list to keep results matching the pattern
-" :QFilter! pattern - will remove results that match the pattern
-function! s:FilterQuickfixList(bang, pattern)
-  let cmp = a:bang ? '!~#' : '=~#'
-  call setqflist(filter(getqflist(), "bufname(v:val['bufnr']) " . cmp . " a:pattern"))
-endfunction
-command! -bang -nargs=1 -complete=file QFilter call s:FilterQuickfixList(<bang>0, <q-args>)
