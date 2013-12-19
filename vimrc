@@ -42,6 +42,11 @@ set nolist
 " Use only 1 space after "." when joining lines instead of 2
 set nojoinspaces
 
+" Delete comment character when joining commented lines
+if v:version > 703 || v:version == 703 && has("patch541")
+  set formatoptions+=j     
+endif
+
 " Don't reset cursor to start of line when moving around
 set nostartofline
 
@@ -73,9 +78,20 @@ set nowritebackup               " only in case you don't want a backup file whil
 set noswapfile                  " no swap files
 set backupdir=~/tmp
 
+" Time out on key codes but not mappings
+set notimeout
+set ttimeout
+set ttimeoutlen=100
+
+" Auto-reload buffers when files are changed on disk
+set autoread
+
 " Lines with equal indent form a fold.
 set foldmethod=indent
 set nofoldenable    " disable folding
+
+" Use the OS clipboard by default
+set clipboard=unnamed
 
 set undofile                    " Save undo's after file closes
 set undodir=~/.vim/undo         " where to save undo histories
@@ -87,11 +103,15 @@ set vb                          " disable alert sound
 syntax enable
 syntax sync minlines=256
 set showcmd                     " display incomplete commands
-set history=1000                " a ton of history
+set history=100                 " a ton of history
+
+" Default shell and shell syntax
+set shell=bash
+let g:is_bash=1
 
 "" Whitespace
-set tabstop=2 shiftwidth=2      " a tab is two spaces (or set this to 4)
-set expandtab                   " use spaces, not tabs (optional)
+set tabstop=2 shiftwidth=2      " a tab is two spaces
+set expandtab                   " use spaces, not tabs
 set backspace=indent,eol,start  " backspace through everything in insert mode
 
 "" Searching
@@ -105,15 +125,16 @@ set autoindent                  " indent on enter
 set shiftround                  " indent to the closest shiftwidth
 set switchbuf=useopen,usetab    " move focus to where the buffer is
 
-" Return to last edit position when opening files (You want this!)
-autocmd BufReadPost *
-     \ if line("'\"") > 0 && line("'\"") <= line("$") |
-     \   exe "normal! g`\"" |
-     \ endif
-
 " The "Press ENTER or type command to continue" prompt is jarring and usually unnecessary.
 " You can shorten command-line text and other info tokens with, e.g.:
 set shortmess=atI
+
+" Set <c-n> and <c-p> to act like Up/Down so will filter command history
+cnoremap <c-p> <up>
+cnoremap <c-n> <down>
+
+" <c-a> jumps to beginning of line to match <c-e>
+cnoremap <c-a> <home>
 
 " setting up NERDTree
 
@@ -126,12 +147,85 @@ nmap <C-n> :NERDTreeToggle<cr>
 
 
 " C-c send enter in insert mode
-imap <C-c> <CR><Esc>O
+imap <C-c> <Esc>
 
 cnoreabbrev W w
 cnoreabbrev Q q
 
-set wildignore+=*.o,*.obj,.git,*.rbc,*.class,.DS_Store,.svn,*.png,*.jpg,*.gif,*.log,coverage/*,TAGS,tmtags,*.tmproj,*.pid
+" Expand %% to current directory
+" http://vimcasts.org/e/14
+cnoremap %% <C-R>=expand('%:h').'/'<cr>
+
+" =============================================================================
+" Filetypes and Custom Autocmds
+" =============================================================================
+
+augroup vimrcEx
+  " Clear all autocmds for the current group
+  autocmd!
+
+  " Jump to last cursor position unless it's invalid or in an event handler or
+  " a git commit
+  au BufReadPost *
+    \ if &filetype !~ '^git\c' && line("'\"") > 0 && line("'\"") <= line("$") |
+    \   exe "normal! g`\"" |
+    \ endif
+
+  " Some file types use real tabs
+  au FileType {make,gitconfig} set noexpandtab sw=4
+
+  " Treat JSON files like JavaScript
+  au BufNewFile,BufRead *.json setf javascript
+
+  " Make Python follow PEP8
+  au FileType python set sts=4 ts=4 sw=4 tw=79
+
+  " Make sure all markdown files have the correct filetype
+  au BufRead,BufNewFile *.{md,markdown,mdown,mkd,mkdn,txt} setf markdown
+
+  " MultiMarkdown requires 4-space tabs
+  au FileType markdown set sts=4 ts=4 sw=4
+
+  " Leave the return key alone when in command line windows, since it's used
+  " to run commands there
+  au! CmdwinEnter * :unmap <cr>
+  au! CmdwinLeave * :call MapCR()
+augroup END
+
+""
+"" Status Line
+""
+
+if has("statusline") && !&cp
+  set laststatus=2 " windows always have status line
+  set statusline=%f\ %y\%m\%r " filename [type][modified][readonly]
+  set stl+=%{fugitive#statusline()} " git via fugitive.vim
+  " buffer number / buffer count
+  set stl+=\[b%n/%{len(filter(range(1,bufnr('$')),'buflisted(v:val)'))}\]
+  set stl+=\ %l/%L[%p%%]\,%v " line/total[%],column
+endif
+
+" Use emacs-style tab completion when selecting files, etc
+set wildmode=longest,list
+
+" Disable output and VCS files
+set wildignore+=*.o,*.out,*.obj,.git,*.rbc,*.rbo,*.class,.svn,*.gem
+
+" Disable archive files
+set wildignore+=*.zip,*.tar.gz,*.tar.bz2,*.rar,*.tar.xz
+
+" Ignore bundler and sass cache
+set wildignore+=*/vendor/gems/*,*/vendor/cache/*,*/.bundle/*,*/.sass-cache/*
+
+" Ignore rails temporary asset caches
+set wildignore+=*/tmp/cache/assets/*/sprockets/*,*/tmp/cache/assets/*/sass/*
+
+" Ignore node modules
+set wildignore+=node_modules/*
+
+" Disable temp and backup files
+set wildignore+=*.swp,*~,._*
+
 let g:ctrlp_working_path_mode = 0
 let g:ctrlp_clear_cache_on_exit = 0
 let g:ctrlp_custom_ignore = {
@@ -171,11 +265,19 @@ map <C-l> <C-w>l
 
 inoremap kj <Esc>
 
-nnoremap <leader>, :b#<cr>
+nnoremap <leader><leader> :b#<cr>
 
 map <C-b> :CtrlPBuffer<cr>
-nnoremap <leader><leader> :noh<cr>
 nmap <leader>V :e ~/.vimrc<cr>
+
+" Clear last search highlighting with enter and clear the command line
+function! MapCR()
+  nnoremap <cr> :nohlsearch<cr>:<backspace>
+endfunction
+call MapCR()
+
+" Re-highlight last search pattern
+nnoremap <leader>hs :set hlsearch<cr>
 
 " open diffs in a new tab
 nmap __ :tabedit %<CR>:Gdiff<CR>
@@ -220,6 +322,7 @@ else
 endif
 
 " Run tests using vimux
+let g:VimuxHeight = "40"
 let g:vroom_use_vimux = 1
 let g:vroom_map_keys = 0
 nmap <leader>r :VroomRunNearestTest<cr>
