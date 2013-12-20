@@ -90,9 +90,6 @@ set autoread
 set foldmethod=indent
 set nofoldenable    " disable folding
 
-" Use the OS clipboard by default
-set clipboard=unnamed
-
 set undofile                    " Save undo's after file closes
 set undodir=~/.vim/undo         " where to save undo histories
 set undolevels=1000             " How many undos
@@ -324,7 +321,10 @@ endif
 " Run tests using vimux
 let g:VimuxHeight = "40"
 let g:vroom_use_vimux = 1
+let g:vroom_use_spring = 1
 let g:vroom_map_keys = 0
 nmap <leader>r :VroomRunNearestTest<cr>
 nmap <leader>R :VroomRunTestFile<cr>
 
+" Disable mappings from vim-ruby-refactoring
+let g:ruby_refactoring_map_keys=0
