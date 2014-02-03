@@ -112,7 +112,6 @@ set expandtab                   " use spaces, not tabs
 set backspace=indent,eol,start  " backspace through everything in insert mode
 
 "" Searching
-set hlsearch                    " highlight matches
 set incsearch                   " incremental searching
 set ignorecase                  " searches are case insensitive...
 set smartcase                   " ... unless they contain at least one capital letter
@@ -226,7 +225,7 @@ set wildignore+=*.swp,*~,._*
 let g:ctrlp_working_path_mode = 0
 let g:ctrlp_clear_cache_on_exit = 0
 let g:ctrlp_custom_ignore = {
-  \ 'dir':  '\.git$\|\.hg$\|\.svn$\|build$\|coverage$\|doc$\|tmp$\|public/assets$\|vendor$\|Android$',
+  \ 'dir':  '\.git$\|\.hg$\|\.svn$\|build$\|resources$\|coverage$\|doc$\|tmp$\|public/assets$\|vendor$\|Android$',
   \ 'file': '\.jpg$\|\.exe$\|\.so$\|\.dll$'
   \ }
 
@@ -266,12 +265,6 @@ nnoremap <leader><leader> :b#<cr>
 
 map <C-b> :CtrlPBuffer<cr>
 nmap <leader>V :e ~/.vimrc<cr>
-
-" Clear last search highlighting with enter and clear the command line
-function! MapCR()
-  nnoremap <cr> :nohlsearch<cr>:<backspace>
-endfunction
-call MapCR()
 
 " Re-highlight last search pattern
 nnoremap <leader>hs :set hlsearch<cr>
@@ -321,8 +314,9 @@ endif
 " Run tests using vimux
 let g:VimuxHeight = "40"
 let g:vroom_use_vimux = 1
-let g:vroom_use_spring = 1
+let g:vroom_use_spring = 0
 let g:vroom_map_keys = 0
+let g:vroom_cucumber_path = "cucumber"
 nmap <leader>r :VroomRunNearestTest<cr>
 nmap <leader>R :VroomRunTestFile<cr>
 
