@@ -56,15 +56,11 @@ autocmd FileType css,scss set iskeyword=@,48-57,_,-,?,!,192-255
 set runtimepath+=~/.vim.local
 
 set background=dark
-colorscheme lucius
-if has('gui_running')
-  set macmeta
-  set guioptions=aAce
-  set guifont=Monaco:h13
-end
+colorscheme base16-default
 
 "" Always show the file name
 set modeline
+set hlsearch                    " highlight the search
 set ls=2
 set cursorline                  " highlight current line
 set ttyfast                     " improves redrawing for newer computers
@@ -118,8 +114,9 @@ set smartcase                   " ... unless they contain at least one capital l
 set scrolloff=5                 " keep a 5 line padding when moving the cursor
 
 set autoindent                  " indent on enter
+set smartindent                 " do smart indenting when starting a new line
 set shiftround                  " indent to the closest shiftwidth
-set switchbuf=useopen,usetab    " move focus to where the buffer is
+"set switchbuf=useopen,usetab    " move focus to where the buffer is
 
 " The "Press ENTER or type command to continue" prompt is jarring and usually unnecessary.
 " You can shorten command-line text and other info tokens with, e.g.:
@@ -225,7 +222,7 @@ set wildignore+=*.swp,*~,._*
 let g:ctrlp_working_path_mode = 0
 let g:ctrlp_clear_cache_on_exit = 0
 let g:ctrlp_custom_ignore = {
-  \ 'dir':  '\.git$\|\.hg$\|\.svn$\|build$\|resources$\|coverage$\|doc$\|tmp$\|public/assets$\|vendor$\|Android$',
+  \ 'dir':  '\.git\|bin$\|\.hg\|\.svn\|build\|log\|resources\|coverage\|doc\|tmp\|public/assets\|vendor\|Android',
   \ 'file': '\.jpg$\|\.exe$\|\.so$\|\.dll$'
   \ }
 
@@ -265,9 +262,6 @@ nnoremap <leader><leader> :b#<cr>
 
 map <C-b> :CtrlPBuffer<cr>
 nmap <leader>V :e ~/.vimrc<cr>
-
-" Re-highlight last search pattern
-nnoremap <leader>hs :set hlsearch<cr>
 
 " open diffs in a new tab
 nmap __ :tabedit %<CR>:Gdiff<CR>
@@ -315,6 +309,7 @@ endif
 let g:VimuxHeight = "40"
 let g:vroom_use_vimux = 1
 let g:vroom_use_spring = 0
+let g:vroom_use_binstubs = 0
 let g:vroom_map_keys = 0
 let g:vroom_cucumber_path = "cucumber"
 nmap <leader>r :VroomRunNearestTest<cr>
@@ -322,3 +317,24 @@ nmap <leader>R :VroomRunTestFile<cr>
 
 " Disable mappings from vim-ruby-refactoring
 let g:ruby_refactoring_map_keys=0
+
+" use pandoc to clean up html code (with `gq`)
+function! FormatprgLocal(filter)
+  if !empty(v:char)
+    return 1
+  else
+    let l:command = v:lnum.','.(v:lnum+v:count-1).'!'.a:filter
+    echo l:command
+    execute l:command
+  endif
+endfunction
+ 
+if has("autocmd")
+  let pandoc_pipeline  = "pandoc --from=html --to=markdown"
+  let pandoc_pipeline .= " | pandoc --from=markdown --to=html"
+  autocmd FileType html setlocal formatexpr=FormatprgLocal(pandoc_pipeline)
+endif
+
+" airline unicode symbols
+let g:airline_left_sep = '»'
+let g:airline_right_sep = '«'

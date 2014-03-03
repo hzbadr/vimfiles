@@ -106,3 +106,18 @@
 [submodule "bundle/vim-expand-region"]
 	path = bundle/vim-expand-region
 	url = git@github.com:terryma/vim-expand-region.git
+[submodule "bundle/tabular"]
+	path = bundle/tabular
+	url = https://github.com/godlygeek/tabular
+[submodule "bundle/ir_black"]
+	path = bundle/ir_black
+	url = git@github.com:twerth/ir_black.git
+[submodule "bundle/vim-exchange"]
+	path = bundle/vim-exchange
+	url = git@github.com:tommcdo/vim-exchange.git
+[submodule "/Users/cezar/.vim/bundle/vim-airline"]
+	path = /Users/cezar/.vim/bundle/vim-airline
+	url = https://github.com/bling/vim-airline
+[submodule "bundle/base16-vim"]
+	path = bundle/base16-vim
+	url = git@github.com:chriskempson/base16-vim.git
