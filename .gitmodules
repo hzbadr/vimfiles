@@ -79,9 +79,6 @@
 [submodule "bundle/syntastic"]
 	path = bundle/syntastic
 	url = git@github.com:scrooloose/syntastic.git
-[submodule "bundle/nerdtree"]
-	path = bundle/nerdtree
-	url = git@github.com:scrooloose/nerdtree.git
 [submodule "bundle/gundo.vim"]
 	path = bundle/gundo.vim
 	url = git@github.com:sjl/gundo.vim.git
@@ -124,3 +121,15 @@
 [submodule "bundle/vim-preview"]
 	path = bundle/vim-preview
 	url = git@github.com:greyblake/vim-preview.git
+[submodule "bundle/vim-ragtag"]
+	path = bundle/vim-ragtag
+	url = git@github.com:tpope/vim-ragtag.git
+[submodule "bundle/html5.vim"]
+	path = bundle/html5.vim
+	url = git@github.com:othree/html5.vim.git
+[submodule "bundle/vim-commentary"]
+	path = bundle/vim-commentary
+	url = https://github.com/tpope/vim-commentary
+[submodule "bundle/patchreview-vim"]
+	path = bundle/patchreview-vim
+	url = git@github.com:junkblocker/patchreview-vim.git

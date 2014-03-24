@@ -27,10 +27,16 @@ set encoding=utf-8 nobomb
 " Clear PAGER if Vim's Man function is needed
 let $PAGER=''
 
+" Directory list style
+let g:netrw_liststyle=3
+
 " Invisible characters
 "set listchars=tab:▸\ ,nbsp:_
 "set listchars=tab:\ \ ,trail:·,eol:¬,nbsp:_,extends:❯,precedes:❮
 set listchars=tab:▸\ ,trail:·,eol:¬,nbsp:_,extends:❯,precedes:❮
+
+" Settings for the gui version
+set guifont=Monaco:h13
 
 " ERB tags for surround
 let g:surround_45 = "<% \r %>"
@@ -128,16 +134,6 @@ cnoremap <c-n> <down>
 
 " <c-a> jumps to beginning of line to match <c-e>
 cnoremap <c-a> <home>
-
-" setting up NERDTree
-
-"" close vim if NERDTree is the last window opened
-autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
-let g:NERDTreeMinimalUI = 1
-let g:NERDTreeWinSize = 40
-nmap <C-f> :NERDTreeFind<cr>
-nmap <C-n> :NERDTreeToggle<cr>
-
 
 " C-c send enter in insert mode
 imap <C-c> <Esc>
@@ -306,7 +302,8 @@ else
 endif
 
 " Run tests using vimux
-let g:VimuxHeight = "40"
+let g:VimuxHeight = "45"
+let g:VimuxOrientation = "h"
 let g:vroom_use_vimux = 1
 let g:vroom_use_spring = 0
 let g:vroom_use_binstubs = 0
@@ -338,3 +335,8 @@ endif
 " airline unicode symbols
 let g:airline_left_sep = '»'
 let g:airline_right_sep = '«'
+
+highlight DiffAdd cterm=none ctermfg=fg ctermbg=112 gui=none guifg=bg guibg=#87d700
+highlight DiffDelete cterm=none ctermfg=fg ctermbg=160 gui=none guifg=fg guibg=#d70000
+highlight DiffChange cterm=none ctermfg=fg ctermbg=100 gui=none guifg=fg guibg=#878700
+highlight DiffText cterm=none ctermfg=010 ctermbg=112 gui=none guifg=#00f00 guibg=#87d700
