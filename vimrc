@@ -17,6 +17,48 @@ filetype plugin indent on
 "execute pathogen#infect('colors/{}', 'langs/{}', 'tools/{}')
 execute pathogen#infect()
 
+" set the runtime path to include Vundle and initialize
+set rtp+=~/.vim/bundle/vundle/
+call vundle#rc()
+
+" let Vundle manage Vundle, required
+Plugin 'gmarik/vundle'
+
+Bundle 'skalnik/vim-vroom'
+Bundle 'scrooloose/nerdtree'
+Bundle "daylerees/colour-schemes", { "rtp": "vim/" }
+Bundle 'christoomey/vim-tmux-navigator'
+
+" NerdTree
+nnoremap <Leader>nt :NERDTree<cr>
+nnoremap <Leader>nf :NERDTreeFind<cr>
+
+nnoremap <Leader>r :redraw!<CR>
+
+" Vroom
+let g:vroom_use_vimux = 1
+let g:vroom_use_colors = 1
+
+" Vimux
+" Function to tell Vimux to have make tmux zoom its runner pane. 
+  function! VimuxZoomRunner()
+    call VimuxInspectRunner()
+    call system("tmux resize-pane -Z")
+  endfunction
+
+" Run the last command
+nnoremap <Leader>vl :VimuxRunLastCommand<CR>
+" Close vim tmux runner opened by VimuxRunCommand
+nnoremap <Leader>vq :VimuxCloseRunner<CR>
+" Inspect runner pane map
+nnoremap <Leader>vi :VimuxInspectRunner<CR>
+" Zoom the tmux runner page
+nnoremap <Leader>vz :VimuxZoomRunner<CR>
+" Prompt for a command to run
+nnoremap <Leader>vp :VimuxPromptCommand<CR>
+" Close vim tmux runner opened by VimuxRunCommand
+nnoremap <Leader>vq :VimuxCloseRunner<CR>
+
 " Load vimrc from current directory and disable unsafe commands in them
 set exrc
 set secure
@@ -28,7 +70,7 @@ set encoding=utf-8 nobomb
 let $PAGER=''
 
 " Directory list style
-let g:netrw_liststyle=3
+let g:netrw_liststyle=0
 
 " Invisible characters
 "set listchars=tab:▸\ ,nbsp:_
@@ -62,7 +104,8 @@ autocmd FileType css,scss set iskeyword=@,48-57,_,-,?,!,192-255
 set runtimepath+=~/.vim.local
 
 set background=dark
-colorscheme base16-default
+colorscheme Tomorrow-Night
+"colorscheme base16-default
 
 "" Always show the file name
 set modeline
@@ -90,6 +133,7 @@ set autoread
 
 " Lines with equal indent form a fold.
 set foldmethod=indent
+set foldlevel=5
 set nofoldenable    " disable folding
 
 set undofile                    " Save undo's after file closes
@@ -117,16 +161,21 @@ set backspace=indent,eol,start  " backspace through everything in insert mode
 set incsearch                   " incremental searching
 set ignorecase                  " searches are case insensitive...
 set smartcase                   " ... unless they contain at least one capital letter
-set scrolloff=5                 " keep a 5 line padding when moving the cursor
+set scrolloff=1                 " keep a 1 line padding when moving the cursor
 
 set autoindent                  " indent on enter
 set smartindent                 " do smart indenting when starting a new line
 set shiftround                  " indent to the closest shiftwidth
-"set switchbuf=useopen,usetab    " move focus to where the buffer is
+"set switchbuf=useopen,usetab   " move focus to where the buffer is
+
+set tagbsearch                  " use binary searching for tags
 
 " The "Press ENTER or type command to continue" prompt is jarring and usually unnecessary.
 " You can shorten command-line text and other info tokens with, e.g.:
 set shortmess=atI
+
+" remove search highlighting
+nmap <leader>h :noh<cr>
 
 " Set <c-n> and <c-p> to act like Up/Down so will filter command history
 cnoremap <c-p> <up>
@@ -234,33 +283,37 @@ nmap Y y$
 " close the buffer but not it's window
 nnoremap <C-c> :bp\|bd #<cr>
 
+" Switch to alternate file
+noremap <Tab> :bnext<CR>
+noremap <S-Tab> :bprevious<CR>
+
 " reselect visual block after indent/outdent
 vnoremap < <gv
 vnoremap > >gv
 
 map <leader>a :Ack! 
 
-" buffer navigation
-nnoremap <leader>n :tabnext<cr>
-nnoremap <leader>p :tabprevious<cr>
-nnoremap <leader>t :tabnew<cr>
-nnoremap <leader>c :tabclose<cr>
-
 " Move between splits
 map <C-h> <C-w>h
 map <C-j> <C-w>j
 map <C-k> <C-w>k
 map <C-l> <C-w>l
+nnoremap <Leader>, 2<C-w><
+nnoremap <Leader>. 2<C-w>>
+nnoremap <Leader>- 2<C-w>-
+nnoremap <Leader>= 2<C-w>+
+let g:tmux_navigator_no_mappings = 1
 
-inoremap kj <Esc>
+nnoremap <silent> <C-h> :TmuxNavigateLeft<cr>
+nnoremap <silent> <C-j> :TmuxNavigateDown<cr>
+nnoremap <silent> <C-k> :TmuxNavigateUp<cr>
+nnoremap <silent> <C-l> :TmuxNavigateRight<cr>
+"nnoremap <silent> {Previous-Mapping} :TmuxNavigatePrevious<cr>
 
 nnoremap <leader><leader> :b#<cr>
 
 map <C-b> :CtrlPBuffer<cr>
 nmap <leader>V :e ~/.vimrc<cr>
-
-" open diffs in a new tab
-nmap __ :tabedit %<CR>:Gdiff<CR>
 
 nnoremap <leader>f :e <C-R>=expand('%:h').'/'<CR>
 
@@ -301,17 +354,6 @@ else
   let &t_EI = "\<Esc>]50;CursorShape=0\x7"
 endif
 
-" Run tests using vimux
-let g:VimuxHeight = "45"
-let g:VimuxOrientation = "h"
-let g:vroom_use_vimux = 1
-let g:vroom_use_spring = 0
-let g:vroom_use_binstubs = 0
-let g:vroom_map_keys = 0
-let g:vroom_cucumber_path = "cucumber"
-nmap <leader>r :VroomRunNearestTest<cr>
-nmap <leader>R :VroomRunTestFile<cr>
-
 " Disable mappings from vim-ruby-refactoring
 let g:ruby_refactoring_map_keys=0
 
@@ -333,10 +375,20 @@ if has("autocmd")
 endif
 
 " airline unicode symbols
-let g:airline_left_sep = '»'
-let g:airline_right_sep = '«'
+let g:airline_left_sep = ''
+let g:airline_right_sep = ''
+" Enable the list of buffers
+let g:airline#extensions#tabline#enabled = 1
+" Show just the filename
+let g:airline#extensions#tabline#fnamemod = ':t'
 
 highlight DiffAdd cterm=none ctermfg=fg ctermbg=112 gui=none guifg=bg guibg=#87d700
 highlight DiffDelete cterm=none ctermfg=fg ctermbg=160 gui=none guifg=fg guibg=#d70000
 highlight DiffChange cterm=none ctermfg=fg ctermbg=100 gui=none guifg=fg guibg=#878700
 highlight DiffText cterm=none ctermfg=010 ctermbg=112 gui=none guifg=#00f00 guibg=#87d700
+
+" look for the tags file in every gem
+autocmd FileType ruby let &l:tags = pathogen#legacyjoin(pathogen#uniq(
+      \ pathogen#split(&tags) +
+      \ map(split($GEM_PATH,':'),'v:val."/gems/*/tags"')))
+

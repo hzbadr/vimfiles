@@ -133,3 +133,9 @@
 [submodule "bundle/patchreview-vim"]
 	path = bundle/patchreview-vim
 	url = git@github.com:junkblocker/patchreview-vim.git
+[submodule "bundle/vim-pyte"]
+	path = bundle/vim-pyte
+	url = git@github.com:therubymug/vim-pyte.git
+[submodule "/Users/cezar/.vim/bundle/vundle"]
+	path = /Users/cezar/.vim/bundle/vundle
+	url = https://github.com/gmarik/vundle.git
