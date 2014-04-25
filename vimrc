@@ -24,27 +24,58 @@ call vundle#rc()
 " let Vundle manage Vundle, required
 Plugin 'gmarik/vundle'
 
-Bundle 'skalnik/vim-vroom'
-Bundle 'scrooloose/nerdtree'
 Bundle "daylerees/colour-schemes", { "rtp": "vim/" }
 Bundle 'christoomey/vim-tmux-navigator'
+Bundle 'dockyard/vim-easydir'
+Bundle 'ecomba/vim-ruby-refactoring'
+Bundle 'garbas/vim-snipmate'
+Bundle 'int3/vim-extradite'
+Bundle 'jelera/vim-javascript-syntax'
+Bundle 'kchmck/vim-coffee-script'
+Bundle 'nathanaelkane/vim-indent-guides'
+Bundle 'pangloss/vim-javascript'
+Bundle 'rorymckinley/vim-rubyhash'
+Bundle 'scrooloose/nerdtree'
+Bundle 'skalnik/vim-vroom'
+Bundle 'tmhedberg/matchit'
+Bundle 'tpope/vim-commentary'
+Bundle 'tpope/vim-fugitive'
+Bundle 'tpope/vim-haml'
+Bundle 'tpope/vim-ragtag'
+Bundle 'tpope/vim-rails'
+Bundle 'tpope/vim-rake'
+Bundle 'tpope/vim-surround'
+Bundle 'tpope/vim-vinegar'
+Bundle 'tpope/vim-unimpaired'
+Bundle 'vim-ruby/vim-ruby'
+Bundle 'benmills/vimux'
+Bundle 'kien/ctrlp.vim'
+Bundle 'mileszs/ack.vim'
+Bundle 'scrooloose/syntastic'
+Bundle 'godlygeek/tabular'
+Bundle 'bling/vim-airline'
+Bundle 'chriskempson/vim-tomorrow-theme'
+Bundle 'marcweber/vim-addon-mw-utils'
+
+" Don't map rubyhash keys
+let g:rubyhash_map_keys = 0
 
 " NerdTree
 nnoremap <Leader>nt :NERDTree<cr>
 nnoremap <Leader>nf :NERDTreeFind<cr>
-
-nnoremap <Leader>r :redraw!<CR>
 
 " Vroom
 let g:vroom_use_vimux = 1
 let g:vroom_use_colors = 1
 
 " Vimux
+let g:VimuxOrientation = "h"
+
 " Function to tell Vimux to have make tmux zoom its runner pane. 
-  function! VimuxZoomRunner()
-    call VimuxInspectRunner()
-    call system("tmux resize-pane -Z")
-  endfunction
+function! VimuxZoomRunner()
+  call VimuxInspectRunner()
+  call system("tmux resize-pane -Z")
+endfunction
 
 " Run the last command
 nnoremap <Leader>vl :VimuxRunLastCommand<CR>
@@ -76,6 +107,9 @@ let g:netrw_liststyle=0
 "set listchars=tab:▸\ ,nbsp:_
 "set listchars=tab:\ \ ,trail:·,eol:¬,nbsp:_,extends:❯,precedes:❮
 set listchars=tab:▸\ ,trail:·,eol:¬,nbsp:_,extends:❯,precedes:❮
+
+" Syntax coloring lines that are too long just slows down the world
+set synmaxcol=128
 
 " Settings for the gui version
 set guifont=Monaco:h13
@@ -113,6 +147,8 @@ set hlsearch                    " highlight the search
 set ls=2
 set cursorline                  " highlight current line
 set ttyfast                     " improves redrawing for newer computers
+set ttyscroll=3
+set lazyredraw                  " to avoid scrolling problems
 set wildmenu                    " show completion on the modeline
 set linespace=0
 set splitright                  " open vertical splits on the right
@@ -391,4 +427,3 @@ highlight DiffText cterm=none ctermfg=010 ctermbg=112 gui=none guifg=#00f00 guib
 autocmd FileType ruby let &l:tags = pathogen#legacyjoin(pathogen#uniq(
       \ pathogen#split(&tags) +
       \ map(split($GEM_PATH,':'),'v:val."/gems/*/tags"')))
-
