@@ -1,0 +1,49 @@
+snippet desc
+describe "#${1}" do
+	${2}
+end
+${0}
+endsnippet
+
+snippet be
+before :each do
+	${1}
+end
+${0}
+endsnippet
+
+snippet bf
+before_filter :${0}
+endsnippet
+
+snippet bt
+belongs_to :${0}
+endsnippet
+
+snippet ex
+expect(${1}).to eq(${2})${0}
+endsnippet
+
+snippet exa
+expect(assigns(:${1})).to eq(${2})${0}
+endsnippet
+
+snippet hm
+has_many :${1:object}${0}
+endsnippet
+
+snippet it
+it "${1}"${0}
+endsnippet
+
+snippet let
+let(:${1}) { ${2} }${0}
+endsnippet
+
+snippet pry
+binding.pry
+endsnippet
+
+snippet vp
+validates :${1}, :presence => true${0}
+endsnippet

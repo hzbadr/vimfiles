@@ -25,10 +25,9 @@ call vundle#rc()
 Plugin 'gmarik/vundle'
 
 Bundle "daylerees/colour-schemes", { "rtp": "vim/" }
-Bundle 'christoomey/vim-tmux-navigator'
 Bundle 'dockyard/vim-easydir'
 Bundle 'ecomba/vim-ruby-refactoring'
-Bundle 'garbas/vim-snipmate'
+Bundle 'SirVer/ultisnips'
 Bundle 'int3/vim-extradite'
 Bundle 'jelera/vim-javascript-syntax'
 Bundle 'kchmck/vim-coffee-script'
@@ -48,7 +47,6 @@ Bundle 'tpope/vim-surround'
 Bundle 'tpope/vim-vinegar'
 Bundle 'tpope/vim-unimpaired'
 Bundle 'vim-ruby/vim-ruby'
-Bundle 'benmills/vimux'
 Bundle 'kien/ctrlp.vim'
 Bundle 'mileszs/ack.vim'
 Bundle 'scrooloose/syntastic'
@@ -56,16 +54,35 @@ Bundle 'godlygeek/tabular'
 Bundle 'bling/vim-airline'
 Bundle 'chriskempson/vim-tomorrow-theme'
 Bundle 'marcweber/vim-addon-mw-utils'
+Bundle 'tomtom/tlib_vim'
+Bundle 'ngmy/vim-rubocop'
+Bundle 'chriskempson/base16-vim'
+Bundle 'altercation/vim-colors-solarized'
 
 " Don't map rubyhash keys
 let g:rubyhash_map_keys = 0
+
+" Rubocop
+let g:vimrubocop_keymap = 0
+
+" Configuring :IndentGuides colors
+let g:indent_guides_auto_colors = 0
+autocmd VimEnter,Colorscheme * :hi IndentGuidesOdd  guibg=red   ctermbg=236
+autocmd VimEnter,Colorscheme * :hi IndentGuidesEven guibg=green ctermbg=237
+
+" UltiSnips
+let g:UltiSnipsSnippetDirectories=["UltiSnips"]
 
 " NerdTree
 nnoremap <Leader>nt :NERDTree<cr>
 nnoremap <Leader>nf :NERDTreeFind<cr>
 
+" Rtags
+let g:rails_ctags_arguments = ['--languages=-javascript']
+
 " Vroom
-let g:vroom_use_vimux = 1
+let g:vroom_use_vimux = 0
+let g:vroom_use_spring = 0
 let g:vroom_use_colors = 1
 
 " Vimux
@@ -76,19 +93,6 @@ function! VimuxZoomRunner()
   call VimuxInspectRunner()
   call system("tmux resize-pane -Z")
 endfunction
-
-" Run the last command
-nnoremap <Leader>vl :VimuxRunLastCommand<CR>
-" Close vim tmux runner opened by VimuxRunCommand
-nnoremap <Leader>vq :VimuxCloseRunner<CR>
-" Inspect runner pane map
-nnoremap <Leader>vi :VimuxInspectRunner<CR>
-" Zoom the tmux runner page
-nnoremap <Leader>vz :VimuxZoomRunner<CR>
-" Prompt for a command to run
-nnoremap <Leader>vp :VimuxPromptCommand<CR>
-" Close vim tmux runner opened by VimuxRunCommand
-nnoremap <Leader>vq :VimuxCloseRunner<CR>
 
 " Load vimrc from current directory and disable unsafe commands in them
 set exrc
@@ -139,7 +143,9 @@ set runtimepath+=~/.vim.local
 
 set background=dark
 colorscheme Tomorrow-Night
+
 "colorscheme base16-default
+"let base16colorspace=256  " Access colors present in 256 colorspace
 
 "" Always show the file name
 set modeline
@@ -294,6 +300,9 @@ set wildignore+=*/vendor/gems/*,*/vendor/cache/*,*/.bundle/*,*/.sass-cache/*
 " Ignore rails temporary asset caches
 set wildignore+=*/tmp/cache/assets/*/sprockets/*,*/tmp/cache/assets/*/sass/*
 
+" Ignore custom folders
+set wildignore+=*/resources/*
+
 " Ignore node modules
 set wildignore+=node_modules/*
 
@@ -338,18 +347,21 @@ nnoremap <Leader>, 2<C-w><
 nnoremap <Leader>. 2<C-w>>
 nnoremap <Leader>- 2<C-w>-
 nnoremap <Leader>= 2<C-w>+
-let g:tmux_navigator_no_mappings = 1
-
-nnoremap <silent> <C-h> :TmuxNavigateLeft<cr>
-nnoremap <silent> <C-j> :TmuxNavigateDown<cr>
-nnoremap <silent> <C-k> :TmuxNavigateUp<cr>
-nnoremap <silent> <C-l> :TmuxNavigateRight<cr>
-"nnoremap <silent> {Previous-Mapping} :TmuxNavigatePrevious<cr>
 
 nnoremap <leader><leader> :b#<cr>
 
 map <C-b> :CtrlPBuffer<cr>
-nmap <leader>V :e ~/.vimrc<cr>
+nmap <leader>V :tabnew\|:e ~/.vimrc<cr>
+map <D-1> 1gt
+map <D-2> 2gt
+map <D-3> 3gt
+map <D-4> 4gt
+map <D-5> 5gt
+map <D-6> 6gt
+map <D-7> 7gt
+map <D-8> 8gt
+map <D-9> 9gt
+map <D-0> :tablast<CR>
 
 nnoremap <leader>f :e <C-R>=expand('%:h').'/'<CR>
 
@@ -374,11 +386,6 @@ function! AdjustWindowHeight(minheight, maxheight)
   exe max([min([line("$"), a:maxheight]), a:minheight]) . "wincmd _"
 endfunction
 
-command! TagFiles :call EchoTags()
-function! EchoTags()
-  echo join(split(&tags, ","), "\n")
-endfunction
-
 " tmux will only forward escape sequences to the terminal if surrounded by a DCS sequence
 " http://sourceforge.net/mailarchive/forum.php?thread_name=AANLkTinkbdoZ8eNR1X2UobLTeww1jFrvfJxTMfKSq-L%2B%40mail.gmail.com&forum_name=tmux-users
  
@@ -393,23 +400,6 @@ endif
 " Disable mappings from vim-ruby-refactoring
 let g:ruby_refactoring_map_keys=0
 
-" use pandoc to clean up html code (with `gq`)
-function! FormatprgLocal(filter)
-  if !empty(v:char)
-    return 1
-  else
-    let l:command = v:lnum.','.(v:lnum+v:count-1).'!'.a:filter
-    echo l:command
-    execute l:command
-  endif
-endfunction
- 
-if has("autocmd")
-  let pandoc_pipeline  = "pandoc --from=html --to=markdown"
-  let pandoc_pipeline .= " | pandoc --from=markdown --to=html"
-  autocmd FileType html setlocal formatexpr=FormatprgLocal(pandoc_pipeline)
-endif
-
 " airline unicode symbols
 let g:airline_left_sep = ''
 let g:airline_right_sep = ''
@@ -423,7 +413,14 @@ highlight DiffDelete cterm=none ctermfg=fg ctermbg=160 gui=none guifg=fg guibg=#
 highlight DiffChange cterm=none ctermfg=fg ctermbg=100 gui=none guifg=fg guibg=#878700
 highlight DiffText cterm=none ctermfg=010 ctermbg=112 gui=none guifg=#00f00 guibg=#87d700
 
+nnoremap <f2> :diffget //2<CR>
+nnoremap <f3> :diffget //3<CR>
+nnoremap <f4> :diffupdate<CR>
+
 " look for the tags file in every gem
 autocmd FileType ruby let &l:tags = pathogen#legacyjoin(pathogen#uniq(
       \ pathogen#split(&tags) +
       \ map(split($GEM_PATH,':'),'v:val."/gems/*/tags"')))
+
+" Auto save contents of a buffer when you lose focus
+autocmd BufLeave,FocusLost * silent! update
