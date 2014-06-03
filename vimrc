@@ -17,6 +17,11 @@ filetype plugin indent on
 "execute pathogen#infect('colors/{}', 'langs/{}', 'tools/{}')
 execute pathogen#infect()
 
+" enable per-project .vimrc files
+set exrc
+" Only execute safe per-project vimrc commands
+set secure
+
 " set the runtime path to include Vundle and initialize
 set rtp+=~/.vim/bundle/vundle/
 call vundle#rc()
@@ -46,18 +51,30 @@ Bundle 'tpope/vim-rake'
 Bundle 'tpope/vim-surround'
 Bundle 'tpope/vim-vinegar'
 Bundle 'tpope/vim-unimpaired'
+Bundle 'tpope/vim-dispatch'
+Bundle 'tpope/vim-speeddating'
 Bundle 'vim-ruby/vim-ruby'
 Bundle 'kien/ctrlp.vim'
 Bundle 'mileszs/ack.vim'
 Bundle 'scrooloose/syntastic'
 Bundle 'godlygeek/tabular'
-Bundle 'bling/vim-airline'
+"Bundle 'bling/vim-airline'
 Bundle 'chriskempson/vim-tomorrow-theme'
 Bundle 'marcweber/vim-addon-mw-utils'
 Bundle 'tomtom/tlib_vim'
 Bundle 'ngmy/vim-rubocop'
 Bundle 'chriskempson/base16-vim'
 Bundle 'altercation/vim-colors-solarized'
+Bundle 'jeetsukumaran/vim-filebeagle'
+Bundle 'airblade/vim-gitgutter'
+"Bundle 'danchoi/ri.vim'
+
+" Disable git gutter by default
+let g:gitgutter_enabled = 0
+" No git gutter keys needed
+let g:gitgutter_map_keys = 0
+" Toggle git gutter
+nnoremap <leader>gg :GitGutterToggle<cr>
 
 " Don't map rubyhash keys
 let g:rubyhash_map_keys = 0
@@ -73,17 +90,19 @@ autocmd VimEnter,Colorscheme * :hi IndentGuidesEven guibg=green ctermbg=237
 " UltiSnips
 let g:UltiSnipsSnippetDirectories=["UltiSnips"]
 
-" NerdTree
-nnoremap <Leader>nt :NERDTree<cr>
-nnoremap <Leader>nf :NERDTreeFind<cr>
-
 " Rtags
 let g:rails_ctags_arguments = ['--languages=-javascript']
+
+" Regenerate ctags
+map <Leader>ct :!ctags --extra=+f --exclude=.git --exclude=log --exclude=doc -R * `rvm gemdir`/gems/*<CR><CR>
 
 " Vroom
 let g:vroom_use_vimux = 0
 let g:vroom_use_spring = 0
 let g:vroom_use_colors = 1
+if has("gui_macvim")
+  let g:vroom_use_colors = 0
+endif
 
 " Vimux
 let g:VimuxOrientation = "h"
@@ -103,6 +122,9 @@ set encoding=utf-8 nobomb
 
 " Clear PAGER if Vim's Man function is needed
 let $PAGER=''
+
+" Get rid of ex-mode
+nnoremap Q <nop>
 
 " Directory list style
 let g:netrw_liststyle=0
@@ -141,8 +163,8 @@ autocmd FileType css,scss set iskeyword=@,48-57,_,-,?,!,192-255
 
 set runtimepath+=~/.vim.local
 
-set background=dark
-colorscheme Tomorrow-Night
+set background=light
+colorscheme Tomorrow
 
 "colorscheme base16-default
 "let base16colorspace=256  " Access colors present in 256 colorspace
@@ -151,7 +173,7 @@ colorscheme Tomorrow-Night
 set modeline
 set hlsearch                    " highlight the search
 set ls=2
-set cursorline                  " highlight current line
+"set cursorline                  " highlight current line
 set ttyfast                     " improves redrawing for newer computers
 set ttyscroll=3
 set lazyredraw                  " to avoid scrolling problems
@@ -160,6 +182,7 @@ set linespace=0
 set splitright                  " open vertical splits on the right
 set splitbelow                  " open the horizontal split below
 set wrap                        " wrap long lines
+set linebreak                   " break lines at word end
 set nobackup                    " no backup files
 set nowritebackup               " only in case you don't want a backup file while editing
 set noswapfile                  " no swap files
@@ -175,8 +198,8 @@ set autoread
 
 " Lines with equal indent form a fold.
 set foldmethod=indent
-set foldlevel=5
-set nofoldenable    " disable folding
+set foldlevel=1
+set nofoldenable                " disable folding
 
 set undofile                    " Save undo's after file closes
 set undodir=~/.vim/undo         " where to save undo histories
@@ -203,7 +226,7 @@ set backspace=indent,eol,start  " backspace through everything in insert mode
 set incsearch                   " incremental searching
 set ignorecase                  " searches are case insensitive...
 set smartcase                   " ... unless they contain at least one capital letter
-set scrolloff=1                 " keep a 1 line padding when moving the cursor
+set scrolloff=5                 " keep a 5 line padding when moving the cursor
 
 set autoindent                  " indent on enter
 set smartindent                 " do smart indenting when starting a new line
@@ -277,15 +300,10 @@ augroup END
 ""
 
 if has("statusline") && !&cp
-  set laststatus=2 " windows always have status line
-  set statusline=%f\ %y\%m\%r " filename [type][modified][readonly]
-  set stl+=%{fugitive#statusline()} " git via fugitive.vim
-  " buffer number / buffer count
-  set stl+=\[b%n/%{len(filter(range(1,bufnr('$')),'buflisted(v:val)'))}\]
-  set stl+=\ %l/%L[%p%%]\,%v " line/total[%],column
+  set statusline=
 endif
 
-" Use emacs-style tab completion when selecting files, etc
+" Show options
 set wildmode=longest,list
 
 " Disable output and VCS files
@@ -311,6 +329,7 @@ set wildignore+=*.swp,*~,._*
 
 let g:ctrlp_working_path_mode = 0
 let g:ctrlp_clear_cache_on_exit = 0
+let g:ctrlp_switch_buffer = 'Et'
 let g:ctrlp_custom_ignore = {
   \ 'dir':  '\.git\|bin$\|\.hg\|\.svn\|build\|log\|resources\|coverage\|doc\|tmp\|public/assets\|vendor\|Android',
   \ 'file': '\.jpg$\|\.exe$\|\.so$\|\.dll$'
@@ -351,7 +370,7 @@ nnoremap <Leader>= 2<C-w>+
 nnoremap <leader><leader> :b#<cr>
 
 map <C-b> :CtrlPBuffer<cr>
-nmap <leader>V :tabnew\|:e ~/.vimrc<cr>
+nmap <leader>V :e ~/.vimrc<cr>
 map <D-1> 1gt
 map <D-2> 2gt
 map <D-3> 3gt
@@ -363,7 +382,7 @@ map <D-8> 8gt
 map <D-9> 9gt
 map <D-0> :tablast<CR>
 
-nnoremap <leader>f :e <C-R>=expand('%:h').'/'<CR>
+nnoremap <leader>F :e <C-R>=expand('%:h').'/'<CR>
 
 " Use a nicer error sign
 let g:syntastic_error_symbol = '→'
@@ -400,13 +419,16 @@ endif
 " Disable mappings from vim-ruby-refactoring
 let g:ruby_refactoring_map_keys=0
 
+" Intent private methods
+let g:ruby_indent_access_modifier_style = 'outdent'
+
 " airline unicode symbols
-let g:airline_left_sep = ''
-let g:airline_right_sep = ''
+" let g:airline_left_sep = ''
+" let g:airline_right_sep = ''
 " Enable the list of buffers
-let g:airline#extensions#tabline#enabled = 1
+" let g:airline#extensions#tabline#enabled = 0
 " Show just the filename
-let g:airline#extensions#tabline#fnamemod = ':t'
+" let g:airline#extensions#tabline#fnamemod = ':t'
 
 highlight DiffAdd cterm=none ctermfg=fg ctermbg=112 gui=none guifg=bg guibg=#87d700
 highlight DiffDelete cterm=none ctermfg=fg ctermbg=160 gui=none guifg=fg guibg=#d70000
