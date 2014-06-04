@@ -29,14 +29,12 @@ call vundle#rc()
 " let Vundle manage Vundle, required
 Plugin 'gmarik/vundle'
 
-Bundle "daylerees/colour-schemes", { "rtp": "vim/" }
 Bundle 'dockyard/vim-easydir'
 Bundle 'ecomba/vim-ruby-refactoring'
 Bundle 'SirVer/ultisnips'
 Bundle 'int3/vim-extradite'
 Bundle 'jelera/vim-javascript-syntax'
 Bundle 'kchmck/vim-coffee-script'
-Bundle 'nathanaelkane/vim-indent-guides'
 Bundle 'pangloss/vim-javascript'
 Bundle 'rorymckinley/vim-rubyhash'
 Bundle 'scrooloose/nerdtree'
@@ -58,13 +56,10 @@ Bundle 'kien/ctrlp.vim'
 Bundle 'mileszs/ack.vim'
 Bundle 'scrooloose/syntastic'
 Bundle 'godlygeek/tabular'
-"Bundle 'bling/vim-airline'
 Bundle 'chriskempson/vim-tomorrow-theme'
 Bundle 'marcweber/vim-addon-mw-utils'
 Bundle 'tomtom/tlib_vim'
 Bundle 'ngmy/vim-rubocop'
-Bundle 'chriskempson/base16-vim'
-Bundle 'altercation/vim-colors-solarized'
 Bundle 'jeetsukumaran/vim-filebeagle'
 Bundle 'airblade/vim-gitgutter'
 "Bundle 'danchoi/ri.vim'
@@ -81,11 +76,6 @@ let g:rubyhash_map_keys = 0
 
 " Rubocop
 let g:vimrubocop_keymap = 0
-
-" Configuring :IndentGuides colors
-let g:indent_guides_auto_colors = 0
-autocmd VimEnter,Colorscheme * :hi IndentGuidesOdd  guibg=red   ctermbg=236
-autocmd VimEnter,Colorscheme * :hi IndentGuidesEven guibg=green ctermbg=237
 
 " UltiSnips
 let g:UltiSnipsSnippetDirectories=["UltiSnips"]
@@ -166,8 +156,9 @@ set runtimepath+=~/.vim.local
 set background=light
 colorscheme Tomorrow
 
-"colorscheme base16-default
-"let base16colorspace=256  " Access colors present in 256 colorspace
+autocmd ColorScheme * highlight Normal ctermbg=White
+autocmd ColorScheme * highlight LineNr ctermbg=255
+autocmd ColorScheme * highlight CursorLineNr ctermbg=255
 
 "" Always show the file name
 set modeline
@@ -187,6 +178,7 @@ set nobackup                    " no backup files
 set nowritebackup               " only in case you don't want a backup file while editing
 set noswapfile                  " no swap files
 set backupdir=~/tmp
+set hidden
 
 " Time out on key codes but not mappings
 set notimeout
@@ -206,7 +198,7 @@ set undodir=~/.vim/undo         " where to save undo histories
 set undolevels=1000             " How many undos
 set undoreload=10000            " number of lines to save for undo
 
-set number                      " line numbers
+set relativenumber              " relative line numbers
 set vb                          " disable alert sound
 syntax enable
 syntax sync minlines=256
@@ -422,14 +414,6 @@ let g:ruby_refactoring_map_keys=0
 " Intent private methods
 let g:ruby_indent_access_modifier_style = 'outdent'
 
-" airline unicode symbols
-" let g:airline_left_sep = ''
-" let g:airline_right_sep = ''
-" Enable the list of buffers
-" let g:airline#extensions#tabline#enabled = 0
-" Show just the filename
-" let g:airline#extensions#tabline#fnamemod = ':t'
-
 highlight DiffAdd cterm=none ctermfg=fg ctermbg=112 gui=none guifg=bg guibg=#87d700
 highlight DiffDelete cterm=none ctermfg=fg ctermbg=160 gui=none guifg=fg guibg=#d70000
 highlight DiffChange cterm=none ctermfg=fg ctermbg=100 gui=none guifg=fg guibg=#878700
@@ -446,3 +430,15 @@ autocmd FileType ruby let &l:tags = pathogen#legacyjoin(pathogen#uniq(
 
 " Auto save contents of a buffer when you lose focus
 autocmd BufLeave,FocusLost * silent! update
+
+" The custom :Qargs command sets the arglist to contain each of the files
+" referenced by the quickfix list.
+command! -nargs=0 -bar Qargs execute 'args' QuickfixFilenames()
+function! QuickfixFilenames()
+  " Building a hash ensures we get each buffer only once
+  let buffer_numbers = {}
+  for quickfix_item in getqflist()
+    let buffer_numbers[quickfix_item['bufnr']] = bufname(quickfix_item['bufnr'])
+  endfor
+  return join(map(values(buffer_numbers), 'fnameescape(v:val)'))
+endfunction
