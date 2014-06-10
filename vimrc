@@ -49,7 +49,6 @@ Bundle 'tpope/vim-rake'
 Bundle 'tpope/vim-surround'
 Bundle 'tpope/vim-vinegar'
 Bundle 'tpope/vim-unimpaired'
-Bundle 'tpope/vim-dispatch'
 Bundle 'tpope/vim-speeddating'
 Bundle 'vim-ruby/vim-ruby'
 Bundle 'kien/ctrlp.vim'
@@ -62,6 +61,7 @@ Bundle 'tomtom/tlib_vim'
 Bundle 'ngmy/vim-rubocop'
 Bundle 'jeetsukumaran/vim-filebeagle'
 Bundle 'airblade/vim-gitgutter'
+Bundle 'wellle/targets.vim'
 "Bundle 'danchoi/ri.vim'
 
 " Disable git gutter by default
@@ -85,23 +85,6 @@ let g:rails_ctags_arguments = ['--languages=-javascript']
 
 " Regenerate ctags
 map <Leader>ct :!ctags --extra=+f --exclude=.git --exclude=log --exclude=doc -R * `rvm gemdir`/gems/*<CR><CR>
-
-" Vroom
-let g:vroom_use_vimux = 0
-let g:vroom_use_spring = 0
-let g:vroom_use_colors = 1
-if has("gui_macvim")
-  let g:vroom_use_colors = 0
-endif
-
-" Vimux
-let g:VimuxOrientation = "h"
-
-" Function to tell Vimux to have make tmux zoom its runner pane. 
-function! VimuxZoomRunner()
-  call VimuxInspectRunner()
-  call system("tmux resize-pane -Z")
-endfunction
 
 " Load vimrc from current directory and disable unsafe commands in them
 set exrc
@@ -198,7 +181,7 @@ set undodir=~/.vim/undo         " where to save undo histories
 set undolevels=1000             " How many undos
 set undoreload=10000            " number of lines to save for undo
 
-set relativenumber              " relative line numbers
+set number                      " line numbers
 set vb                          " disable alert sound
 syntax enable
 syntax sync minlines=256
