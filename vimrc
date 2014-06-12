@@ -62,6 +62,8 @@ Bundle 'ngmy/vim-rubocop'
 Bundle 'jeetsukumaran/vim-filebeagle'
 Bundle 'airblade/vim-gitgutter'
 Bundle 'wellle/targets.vim'
+Bundle 'vim-scripts/SyntaxAttr.vim'
+Bundle 'guns/xterm-color-table.vim'
 "Bundle 'danchoi/ri.vim'
 
 " Disable git gutter by default
@@ -302,12 +304,14 @@ set wildignore+=node_modules/*
 " Disable temp and backup files
 set wildignore+=*.swp,*~,._*
 
+" CtrlP
+hi def link CtrlPMatch CursorLine
 let g:ctrlp_working_path_mode = 0
 let g:ctrlp_clear_cache_on_exit = 0
 let g:ctrlp_switch_buffer = 'Et'
 let g:ctrlp_custom_ignore = {
-  \ 'dir':  '\.git\|bin$\|\.hg\|\.svn\|build\|log\|resources\|coverage\|doc\|tmp\|public/assets\|vendor\|Android',
-  \ 'file': '\.jpg$\|\.exe$\|\.so$\|\.dll$'
+  \ 'dir':  '\.git\|bin\|\.hg\|\.svn\|build\|log\|resources\|coverage\|doc\|tmp\|public/assets\|vendor\|Android',
+  \ 'file': '\.jpg$\|\.exe$\|\.so$\|tags$\|\.dll$'
   \ }
 
 " Will allow you to use :w!! to write to a file using sudo if you
