@@ -7,6 +7,8 @@ autocmd!
 " This must be first because it changes other options as a side effect
 set nocompatible
 
+" Don't show mode
+set noshowmode
 
 " Enable file type detection and load plugin indent files
 filetype plugin on
@@ -59,19 +61,11 @@ Bundle 'chriskempson/vim-tomorrow-theme'
 Bundle 'marcweber/vim-addon-mw-utils'
 Bundle 'tomtom/tlib_vim'
 Bundle 'ngmy/vim-rubocop'
-Bundle 'jeetsukumaran/vim-filebeagle'
-Bundle 'airblade/vim-gitgutter'
 Bundle 'wellle/targets.vim'
 Bundle 'vim-scripts/SyntaxAttr.vim'
 Bundle 'guns/xterm-color-table.vim'
+Bundle 'bling/vim-bufferline'
 "Bundle 'danchoi/ri.vim'
-
-" Disable git gutter by default
-let g:gitgutter_enabled = 0
-" No git gutter keys needed
-let g:gitgutter_map_keys = 0
-" Toggle git gutter
-nnoremap <leader>gg :GitGutterToggle<cr>
 
 " Don't map rubyhash keys
 let g:rubyhash_map_keys = 0
@@ -87,6 +81,18 @@ let g:rails_ctags_arguments = ['--languages=-javascript']
 
 " Regenerate ctags
 map <Leader>ct :!ctags --extra=+f --exclude=.git --exclude=log --exclude=doc -R * `rvm gemdir`/gems/*<CR><CR>
+
+" Toggle NERDTree
+let g:NERDTreeIgnore = ['images$[[dir]]', 'bin$[[dir]]', 'script$[[dir]]', 'logs\?$[[dir]]', 'tmp$[[dir]]', 'doc$[[dir]]', 'coverage$[[dir]]', 'sublime-project$[[file]]']
+let g:NERDTreeMinimalUI = 1
+let g:NERDTreeAutoDeleteBuffer = 1
+nmap <leader>n :NERDTreeToggle<cr>
+nmap <leader>N :NERDTreeFind<cr>
+if isdirectory(argv(0))
+  bd
+  autocmd vimenter * exe "cd" argv(0)
+  autocmd VimEnter * NERDTree
+endif
 
 " Load vimrc from current directory and disable unsafe commands in them
 set exrc
