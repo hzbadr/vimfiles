@@ -60,18 +60,20 @@ Bundle 'godlygeek/tabular'
 Bundle 'chriskempson/vim-tomorrow-theme'
 Bundle 'marcweber/vim-addon-mw-utils'
 Bundle 'tomtom/tlib_vim'
-Bundle 'ngmy/vim-rubocop'
 Bundle 'wellle/targets.vim'
 Bundle 'vim-scripts/SyntaxAttr.vim'
 Bundle 'guns/xterm-color-table.vim'
-Bundle 'bling/vim-bufferline'
-"Bundle 'danchoi/ri.vim'
+Bundle 'slim-template/vim-slim'
 
 " Don't map rubyhash keys
 let g:rubyhash_map_keys = 0
+" ruby path if you are using RVM
+let g:ruby_path = system('rvm current')
+" Disable mappings from vim-ruby-refactoring
+let g:ruby_refactoring_map_keys=0
+" Intent private methods
+let g:ruby_indent_access_modifier_style = 'outdent'
 
-" Rubocop
-let g:vimrubocop_keymap = 0
 
 " UltiSnips
 let g:UltiSnipsSnippetDirectories=["UltiSnips"]
@@ -196,8 +198,8 @@ syntax sync minlines=256
 set showcmd                     " display incomplete commands
 set history=100                 " a ton of history
 
-" Default shell and shell syntax
-set shell=bash
+" Default shell and shell syntax and source ~/.bash_profile
+set shell=/bin/bash\ --login
 let g:is_bash=1
 
 "" Whitespace
@@ -316,7 +318,7 @@ let g:ctrlp_working_path_mode = 0
 let g:ctrlp_clear_cache_on_exit = 0
 let g:ctrlp_switch_buffer = 'Et'
 let g:ctrlp_custom_ignore = {
-  \ 'dir':  '\.git\|bin\|\.hg\|\.svn\|build\|log\|resources\|coverage\|doc\|tmp\|public/assets\|vendor\|Android',
+  \ 'dir':  '\.git\|node_modules\|bin\|\.hg\|\.svn\|build\|log\|resources\|coverage\|doc\|tmp\|public/assets\|vendor\|Android',
   \ 'file': '\.jpg$\|\.exe$\|\.so$\|tags$\|\.dll$'
   \ }
 
@@ -376,7 +378,7 @@ let g:syntastic_warning_symbol = '→'
 " Fix the difficult-to-read default setting for diff text highlighting.  The
 " bang (!) is required since we are overwriting the DiffText setting. The highlighting
 " for "Todo" also looks nice (yellow) if you don't like the "MatchParen" colors.
-highlight! link DiffText MatchParen
+" highlight! link DiffText MatchParen
 
 " clear those nasty fugitive buffers
 autocmd BufReadPost fugitive://* set bufhidden=delete
@@ -401,16 +403,10 @@ else
   let &t_EI = "\<Esc>]50;CursorShape=0\x7"
 endif
 
-" Disable mappings from vim-ruby-refactoring
-let g:ruby_refactoring_map_keys=0
-
-" Intent private methods
-let g:ruby_indent_access_modifier_style = 'outdent'
-
-highlight DiffAdd cterm=none ctermfg=fg ctermbg=112 gui=none guifg=bg guibg=#87d700
-highlight DiffDelete cterm=none ctermfg=fg ctermbg=160 gui=none guifg=fg guibg=#d70000
-highlight DiffChange cterm=none ctermfg=fg ctermbg=100 gui=none guifg=fg guibg=#878700
-highlight DiffText cterm=none ctermfg=010 ctermbg=112 gui=none guifg=#00f00 guibg=#87d700
+highlight DiffAdd cterm=none ctermfg=fg ctermbg=157 gui=none guifg=bg guibg=#87d700
+highlight DiffDelete cterm=none ctermfg=fg ctermbg=167 gui=none guifg=fg guibg=#d70000
+highlight DiffChange cterm=none ctermfg=fg ctermbg=217 gui=none guifg=fg guibg=#878700
+highlight DiffText cterm=bold ctermfg=010 ctermbg=217 gui=none guifg=#00f00 guibg=#87d700
 
 nnoremap <f2> :diffget //2<CR>
 nnoremap <f3> :diffget //3<CR>
