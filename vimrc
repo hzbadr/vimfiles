@@ -25,7 +25,7 @@ set exrc
 set secure
 
 " Show me whitespace
-set list
+" au FileType * if &filetype =~ /scss\|css\|ruby/ | setlocal list | endif
 
 " automatically reload vimrc when it's saved
 au BufWritePost .vimrc so $MYVIMRC
@@ -72,7 +72,6 @@ Plugin 'slim-template/vim-slim'
 Plugin 'ngmy/vim-rubocop'
 Plugin 'nanotech/jellybeans.vim'
 Plugin 'd11wtq/ctrlp_bdelete.vim'
-Plugin 'airblade/vim-gitgutter'
 Plugin 'jgdavey/vim-blockle.git'
 Plugin 'thoughtbot/vim-rspec'
 Plugin 'tommcdo/vim-exchange'
@@ -85,23 +84,22 @@ Plugin 'mattn/webapi-vim'
 Plugin 'zefei/vim-wintabs'
 Plugin 'tpope/vim-abolish'
 Plugin 'gregsexton/gitv'
+Plugin 'gabrielelana/vim-markdown'
+
 
 " All of your Plugins must be added before the following line
 call vundle#end()
-
-" Git Gutter
-let g:gitgutter_map_keys = 0
 
 " CtrlP Delete
 call ctrlp_bdelete#init()
 
 " Run rspec with line number
 " maps <leader>r to a rspec running command
-" :nn <expr> <Leader>R ":nn <lt>Leader>r :!spring rspec <lt>C-R>=expand('%')<lt>CR>:".input("Line number: ", line('.'))."<lt>CR>"
+:nn <expr> <Leader>C ":nn <lt>Leader>cu :!cucumber <lt>C-R>=expand('%')<lt>CR>:".input("Line number: ", line('.'))."<lt>CR>"
 
 " RSpec.vim mappings
-" let g:rspec_command = "!rspec {spec}"
-let g:rspec_command = "!spring rspec {spec}"
+let g:rspec_command = "!rspec {spec}"
+"let g:rspec_command = "!spring rspec {spec}"
 nnoremap <Leader>t :call RunCurrentSpecFile()<CR>
 nnoremap <Leader>s :call RunNearestSpec()<CR>
 nnoremap <Leader>l :call RunLastSpec()<CR>
@@ -156,6 +154,18 @@ if isdirectory(argv(0))
   autocmd VimEnter * NERDTree
 endif
 
+" Rename current file
+function! RenameFile()
+  let old_name = expand('%')
+  let new_name = input('New file name: ', expand('%'), 'file')
+  if new_name != '' && new_name != old_name
+    exec ':saveas ' . new_name
+    exec ':silent !rm ' . old_name
+    redraw!
+  endif
+endfunction
+nnoremap <leader>R :call RenameFile()<cr>
+
 " Use UTF-8 without BOM
 set encoding=utf-8 nobomb
 
@@ -204,9 +214,9 @@ set runtimepath+=~/.vim.local
 set background=dark
 colorscheme jellybeans
 
-" autocmd ColorScheme * highlight Normal ctermbg=White
-" autocmd ColorScheme * highlight LineNr ctermbg=255
-" autocmd ColorScheme * highlight CursorLineNr ctermbg=255
+" Make those debugger statements painfully obvious
+au BufEnter *.rb syn match error contained "\<binding.pry\>"
+au BufEnter *.rb syn match error contained "\<debugger\>"
 
 "" Always show the file name
 set modeline
@@ -245,7 +255,7 @@ set undofile                    " Save undo's after file closes
 set undodir=~/.vim/undo         " where to save undo histories
 set undolevels=1000             " How many undos
 set undoreload=10000            " number of lines to save for undo
-set number                      " line numbers
+set number                    " line numbers
 set vb                          " disable alert sound
 syntax enable
 syntax sync fromstart
@@ -266,7 +276,7 @@ set backspace=indent,eol,start  " backspace through everything in insert mode
 set incsearch                   " incremental searching
 set ignorecase                  " searches are case insensitive...
 set smartcase                   " ... unless they contain at least one capital letter
-set scrolloff=5                 " keep a 5 line padding when moving the cursor
+set scrolloff=0                 " keep a 5 line padding when moving the cursor
 
 set autoindent                  " indent on enter
 set smartindent                 " do smart indenting when starting a new line
