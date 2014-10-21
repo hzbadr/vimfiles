@@ -413,7 +413,7 @@ cnoremap w!! %!sudo tee > /dev/null %
 nnoremap gV `[v`]
 
 " close the buffer but not it's window
-nnoremap <C-c> :bp\|bd #<cr>
+nnoremap <C-c> :bd<cr>
 
 " Switch to alternate file
 noremap <Tab> :WintabsNext<CR>
