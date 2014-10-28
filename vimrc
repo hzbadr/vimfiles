@@ -45,7 +45,7 @@ Plugin 'jelera/vim-javascript-syntax'
 Plugin 'kchmck/vim-coffee-script'
 Plugin 'pangloss/vim-javascript'
 Plugin 'rorymckinley/vim-rubyhash'
-Plugin 'scrooloose/nerdtree'
+"Plugin 'scrooloose/nerdtree'
 Plugin 'tmhedberg/matchit'
 Plugin 'tpope/vim-commentary'
 Plugin 'tpope/vim-fugitive'
@@ -104,8 +104,28 @@ nnoremap <Leader>t :call RunCurrentSpecFile()<CR>
 nnoremap <Leader>s :call RunNearestSpec()<CR>
 nnoremap <Leader>l :call RunLastSpec()<CR>
 nnoremap <Leader>a :call RunAllSpecs()<CR>
+nnoremap <Leader>nn :set nonumber!<CR>
+nnoremap <Leader>nr :set relativenumber<CR>
 
-nnoremap <Leader>W :redraw!<CR>
+" Show absolute line numbers when the window isn't in focus.
+au WinEnter * setl rnu | au WinLeave * setl nornu
+
+" fugitive git bindings
+nnoremap <space>ga :Git add %:p<CR><CR>
+nnoremap <space>gs :Gstatus<CR>
+nnoremap <space>gc :Gcommit -v -q<CR>
+nnoremap <space>gt :Gcommit -v -q %:p<CR>
+nnoremap <space>gd :Gdiff<CR>
+nnoremap <space>ge :Gedit<CR>
+nnoremap <space>gr :Gread<CR>
+nnoremap <space>gw :Gwrite<CR><CR>
+nnoremap <space>gl :silent! Glog<CR>:bot copen<CR>
+nnoremap <space>gp :Ggrep<Space>
+nnoremap <space>gm :Gmove<Space>
+nnoremap <space>gb :Git branch<Space>
+nnoremap <space>go :Git checkout<Space>
+nnoremap <space>gps :Dispatch! git push<CR>
+nnoremap <space>gpl :Dispatch! git pull<CR>
 
 " Rubocop
 let g:vimrubocop_config = '~/.rubocop.yml'
@@ -143,16 +163,16 @@ nnoremap <Leader>ct :!ctags --extra=+f --exclude=.git --exclude=log --exclude=do
 nnoremap <Leader>cc :SyntasticCheck<cr>
 
 " Toggle NERDTree
-let g:NERDTreeIgnore = ['images$[[dir]]', 'bin$[[dir]]', 'script$[[dir]]', 'logs\?$[[dir]]', 'tmp$[[dir]]', 'doc$[[dir]]', 'coverage$[[dir]]', 'sublime-project$[[file]]']
-let g:NERDTreeMinimalUI = 1
-let g:NERDTreeAutoDeleteBuffer = 1
-nnoremap <leader>n :NERDTreeToggle<cr>
-nnoremap <leader>N :NERDTreeFind<cr>
-if isdirectory(argv(0))
-  bd
-  autocmd vimenter * exe "cd" argv(0)
-  autocmd VimEnter * NERDTree
-endif
+" let g:NERDTreeIgnore = ['images$[[dir]]', 'bin$[[dir]]', 'script$[[dir]]', 'logs\?$[[dir]]', 'tmp$[[dir]]', 'doc$[[dir]]', 'coverage$[[dir]]', 'sublime-project$[[file]]']
+" let g:NERDTreeMinimalUI = 1
+" let g:NERDTreeAutoDeleteBuffer = 1
+" nnoremap <leader>nt :NERDTreeToggle<cr>
+" nnoremap <leader>nf :NERDTreeFind<cr>
+" if isdirectory(argv(0))
+"   bd
+"   autocmd vimenter * exe "cd" argv(0)
+"   autocmd VimEnter * NERDTree
+" endif
 
 " Rename current file
 function! RenameFile()
@@ -255,7 +275,8 @@ set undofile                    " Save undo's after file closes
 set undodir=~/.vim/undo         " where to save undo histories
 set undolevels=1000             " How many undos
 set undoreload=10000            " number of lines to save for undo
-set number                    " line numbers
+set number                      " line numbers
+set relativenumber              " turn on relative line numbers
 set vb                          " disable alert sound
 syntax enable
 syntax sync fromstart
@@ -282,6 +303,7 @@ set autoindent                  " indent on enter
 set smartindent                 " do smart indenting when starting a new line
 set shiftround                  " indent to the closest shiftwidth
 "set switchbuf=useopen,usetab   " move focus to where the buffer is
+set switchbuf=""                  " do not move focus
 
 set tagbsearch                  " use binary searching for tags
 
@@ -411,6 +433,8 @@ cnoremap w!! %!sudo tee > /dev/null %
 
 " Visually select the text that was last edited/pasted
 nnoremap gV `[v`]
+" selelct what you've just pasted
+nnoremap gp `[v`]
 
 " close the buffer but not it's window
 nnoremap <C-c> :bd<cr>
