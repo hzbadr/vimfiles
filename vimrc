@@ -85,6 +85,7 @@ Plugin 'zefei/vim-wintabs'
 Plugin 'tpope/vim-abolish'
 Plugin 'gregsexton/gitv'
 Plugin 'gabrielelana/vim-markdown'
+Plugin 'henrik/vim-indexed-search'
 
 
 " All of your Plugins must be added before the following line
@@ -106,6 +107,13 @@ nnoremap <Leader>l :call RunLastSpec()<CR>
 nnoremap <Leader>a :call RunAllSpecs()<CR>
 nnoremap <Leader>nn :set nonumber!<CR>
 nnoremap <Leader>nr :set relativenumber<CR>
+
+" emacs like movement on command line
+cnoremap <c-f> <right>
+cnoremap <c-b> <left>
+cnoremap <c-e> <end>
+cnoremap <c-a> <home>
+cnoremap <c-d> <del>
 
 " Show absolute line numbers when the window isn't in focus.
 au WinEnter * setl rnu | au WinLeave * setl nornu
