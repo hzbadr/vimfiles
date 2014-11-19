@@ -22,7 +22,7 @@ execute pathogen#infect()
 " enable per-project .vimrc files
 set exrc
 " Only execute safe per-project vimrc commands
-set secure
+" set secure
 
 " Show me whitespace
 " au FileType * if &filetype =~ /scss\|css\|ruby/ | setlocal list | endif
@@ -45,7 +45,6 @@ Plugin 'jelera/vim-javascript-syntax'
 Plugin 'kchmck/vim-coffee-script'
 Plugin 'pangloss/vim-javascript'
 Plugin 'rorymckinley/vim-rubyhash'
-"Plugin 'scrooloose/nerdtree'
 Plugin 'tmhedberg/matchit'
 Plugin 'tpope/vim-commentary'
 Plugin 'tpope/vim-fugitive'
@@ -61,7 +60,7 @@ Plugin 'vim-ruby/vim-ruby'
 Plugin 'kien/ctrlp.vim'
 Plugin 'mileszs/ack.vim'
 Plugin 'scrooloose/syntastic'
-Plugin 'godlygeek/tabular'
+Plugin 'junegunn/vim-easy-align'
 Plugin 'chriskempson/vim-tomorrow-theme'
 Plugin 'marcweber/vim-addon-mw-utils'
 Plugin 'tomtom/tlib_vim'
@@ -73,40 +72,61 @@ Plugin 'ngmy/vim-rubocop'
 Plugin 'nanotech/jellybeans.vim'
 Plugin 'd11wtq/ctrlp_bdelete.vim'
 Plugin 'jgdavey/vim-blockle.git'
+Plugin 'vim-scripts/closetag.vim'
 Plugin 'thoughtbot/vim-rspec'
 Plugin 'tommcdo/vim-exchange'
 Plugin 'AndrewRadev/switch.vim'
 Plugin 'christoomey/vim-tmux-navigator'
-Plugin 'junegunn/vim-easy-align'
 Plugin 'rking/ag.vim'
 Plugin 'mattn/gist-vim'
 Plugin 'mattn/webapi-vim'
-Plugin 'zefei/vim-wintabs'
 Plugin 'tpope/vim-abolish'
+Plugin 'tpope/vim-repeat'
 Plugin 'gregsexton/gitv'
 Plugin 'gabrielelana/vim-markdown'
 Plugin 'henrik/vim-indexed-search'
-
+Plugin 'vim-scripts/LargeFile'
+Plugin 'scrooloose/nerdtree'
+Plugin 'skwp/greplace.vim'
+Plugin 'chriskempson/base16-vim'
+Plugin 'AndrewRadev/splitjoin.vim'
 
 " All of your Plugins must be added before the following line
 call vundle#end()
 
+
 " CtrlP Delete
 call ctrlp_bdelete#init()
 
-" Run rspec with line number
-" maps <leader>r to a rspec running command
+" let base16colorspace=256  " Access colors present in 256 colorspace
+
+" Toggle NERDTree
+let g:NERDTreeIgnore = ['images$[[dir]]', 'bin$[[dir]]', 'script$[[dir]]', 'logs\?$[[dir]]', 'tmp$[[dir]]', 'doc$[[dir]]', 'coverage$[[dir]]', 'sublime-project$[[file]]']
+let g:NERDTreeMinimalUI = 1
+let g:NERDTreeAutoDeleteBuffer = 1
+nnoremap <Leader>, :NERDTreeToggle<CR>
+nnoremap <Leader>. :NERDTreeFind<CR>
+" if isdirectory(argv(0))
+"   bd
+"   autocmd vimenter * exe "cd" argv(0)
+"   autocmd VimEnter * NERDTree
+" endif
+
+" Define a mapping that runs the current cucumber
 :nn <expr> <Leader>C ":nn <lt>Leader>cu :!cucumber <lt>C-R>=expand('%')<lt>CR>:".input("Line number: ", line('.'))."<lt>CR>"
 
 " RSpec.vim mappings
-let g:rspec_command = "!rspec {spec}"
-"let g:rspec_command = "!spring rspec {spec}"
+"let g:rspec_command = "!rspec {spec}"
+let g:rspec_command = "!spring rspec {spec}"
 nnoremap <Leader>t :call RunCurrentSpecFile()<CR>
-nnoremap <Leader>s :call RunNearestSpec()<CR>
-nnoremap <Leader>l :call RunLastSpec()<CR>
-nnoremap <Leader>a :call RunAllSpecs()<CR>
-nnoremap <Leader>nn :set nonumber!<CR>
-nnoremap <Leader>nr :set relativenumber<CR>
+nnoremap <Leader>S :call RunNearestSpec()<CR>
+nnoremap <Leader>s :call RunLastSpec()<CR>
+
+" bind K to grep word under cursor
+nnoremap K :Ag! "\b<C-R><C-W>\b"<CR>
+" delete buffer
+nnoremap <silent><leader>d :bp\|bd #<CR>
+nnoremap <silent><leader>D :bd<CR>
 
 " emacs like movement on command line
 cnoremap <c-f> <right>
@@ -114,9 +134,6 @@ cnoremap <c-b> <left>
 cnoremap <c-e> <end>
 cnoremap <c-a> <home>
 cnoremap <c-d> <del>
-
-" Show absolute line numbers when the window isn't in focus.
-au WinEnter * setl rnu | au WinLeave * setl nornu
 
 " fugitive git bindings
 nnoremap <space>ga :Git add %:p<CR><CR>
@@ -128,8 +145,6 @@ nnoremap <space>ge :Gedit<CR>
 nnoremap <space>gr :Gread<CR>
 nnoremap <space>gw :Gwrite<CR><CR>
 nnoremap <space>gl :silent! Glog<CR>:bot copen<CR>
-nnoremap <space>gp :Ggrep<Space>
-nnoremap <space>gm :Gmove<Space>
 nnoremap <space>gb :Git branch<Space>
 nnoremap <space>go :Git checkout<Space>
 nnoremap <space>gps :Dispatch! git push<CR>
@@ -170,18 +185,6 @@ let g:rails_ctags_arguments = ['--languages=-javascript']
 nnoremap <Leader>ct :!ctags --extra=+f --exclude=.git --exclude=log --exclude=doc -R * `rvm gemdir`/gems/*<CR><CR>
 nnoremap <Leader>cc :SyntasticCheck<cr>
 
-" Toggle NERDTree
-" let g:NERDTreeIgnore = ['images$[[dir]]', 'bin$[[dir]]', 'script$[[dir]]', 'logs\?$[[dir]]', 'tmp$[[dir]]', 'doc$[[dir]]', 'coverage$[[dir]]', 'sublime-project$[[file]]']
-" let g:NERDTreeMinimalUI = 1
-" let g:NERDTreeAutoDeleteBuffer = 1
-" nnoremap <leader>nt :NERDTreeToggle<cr>
-" nnoremap <leader>nf :NERDTreeFind<cr>
-" if isdirectory(argv(0))
-"   bd
-"   autocmd vimenter * exe "cd" argv(0)
-"   autocmd VimEnter * NERDTree
-" endif
-
 " Rename current file
 function! RenameFile()
   let old_name = expand('%')
@@ -204,7 +207,7 @@ let $PAGER=''
 nnoremap Q <nop>
 
 " Directory list style
-let g:netrw_liststyle=0
+let g:netrw_liststyle=3
 
 " Invisible characters
 "set listchars=tab:▸\ ,nbsp:_
@@ -237,10 +240,10 @@ autocmd FileType css,scss set iskeyword=@,48-57,_,-,?,!,192-255
 "" Add the '-' as a keyword in erb files
 autocmd FileType eruby set iskeyword=@,48-57,_,192-255,$,-
 
-set runtimepath+=~/.vim.local
-
 set background=dark
-colorscheme jellybeans
+" colorscheme jellybeans
+" colorscheme base16-default
+colorscheme railscasts
 
 " Make those debugger statements painfully obvious
 au BufEnter *.rb syn match error contained "\<binding.pry\>"
@@ -283,8 +286,6 @@ set undofile                    " Save undo's after file closes
 set undodir=~/.vim/undo         " where to save undo histories
 set undolevels=1000             " How many undos
 set undoreload=10000            " number of lines to save for undo
-set number                      " line numbers
-set relativenumber              " turn on relative line numbers
 set vb                          " disable alert sound
 syntax enable
 syntax sync fromstart
@@ -376,7 +377,7 @@ augroup END
 
 if has("statusline") && !&cp
   " Default status line
-  set statusline=%<%f\ %h%m%r%=%-14.(%l,%c%V%)\ %P
+  set statusline=%y\ %<%f\ %h%m%r%=%-16.(line\ %l\ of\ %L%)
   set statusline+=%#warningmsg#
   set statusline+=%{SyntasticStatuslineFlag()}
   set statusline+=%*
@@ -447,28 +448,23 @@ nnoremap gp `[v`]
 " close the buffer but not it's window
 nnoremap <C-c> :bd<cr>
 
-" Switch to alternate file
-noremap <Tab> :WintabsNext<CR>
-noremap <S-Tab> :WintabsPrevious<CR>
-
 " reselect visual block after indent/outdent
 vnoremap < <gv
 vnoremap > >gv
 
 nnoremap <leader>a :Ag! 
 
+nnoremap <TAB> :bnext<CR>
+nnoremap <S-TAB> :bprev<CR>
+
 " Move between splits
 nnoremap <C-h> <C-w>h
 nnoremap <C-j> <C-w>j
 nnoremap <C-k> <C-w>k
 nnoremap <C-l> <C-w>l
-nnoremap <Leader>, 2<C-w><
-nnoremap <Leader>. 2<C-w>>
-nnoremap <Leader>- 2<C-w>-
-nnoremap <Leader>= 2<C-w>+
 
 nnoremap <leader><leader> :b#<cr>
-nnoremap <leader>V :tabnew $MYVIMRC<cr>
+nnoremap <leader>V :e $MYVIMRC<cr>
 
 nnoremap <C-b> :CtrlPBuffer<cr>
 nnoremap <D-1> 1gt
@@ -519,9 +515,6 @@ endif
 
 highlight SignColumn term=standout ctermfg=242 ctermbg=bg guifg=#777777 guibg=bg
 
-nnoremap <f2> :diffget //2<CR>
-nnoremap <f3> :diffget //3<CR>
-nnoremap <f4> :diffupdate<CR>
 nnoremap <leader>r :redraw!<CR>
 nnoremap <leader>q :bd<CR>
 nnoremap <leader>w :%s/^\s\+$//g<CR>
@@ -545,3 +538,4 @@ function! QuickfixFilenames()
   endfor
   return join(map(values(buffer_numbers), 'fnameescape(v:val)'))
 endfunction
+

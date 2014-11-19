@@ -74,3 +74,15 @@ snippet scr
 page.driver.resize(1600, 800)
 page.driver.render('/Users/cezar/Desktop/${1}.png', :full => true)${0}
 endsnippet
+
+snippet itrdr
+it "redirects /${1:from-url} to /${2:to-url}" do
+	get '/$1'
+	expect(response).to redirect_to("/$2")
+	expect(response.status).to eq(301)
+end
+endsnippet
+
+snippet svp
+save_and_open_page
+endsnippet

@@ -4,9 +4,15 @@ Background:
 endsnippet
 
 snippet ft
-Feature: ${0}
+Feature: ${1:description}
+  In order to ${2:receive some benefit}
+  As a ${3:role}
+  I want ${0:goal/desire}
 endsnippet
 
 snippet sc
-Scenario: ${0}
+Scenario: ${1}
+	Given ${2}
+	When ${3}
+	Then ${0}
 endsnippet
