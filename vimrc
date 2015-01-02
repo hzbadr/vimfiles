@@ -56,8 +56,13 @@ Plugin 'tpope/vim-surround'
 Plugin 'tpope/vim-vinegar'
 Plugin 'tpope/vim-unimpaired'
 Plugin 'tpope/vim-speeddating'
+Plugin 'tpope/vim-rsi'
+Plugin 'stefanoverna/vim-i18n'
 Plugin 'vim-ruby/vim-ruby'
+Plugin 'danchoi/ri.vim'
 Plugin 'kien/ctrlp.vim'
+Plugin 'd11wtq/ctrlp_bdelete.vim'
+Plugin 'tacahiroy/ctrlp-funky'
 Plugin 'mileszs/ack.vim'
 Plugin 'scrooloose/syntastic'
 Plugin 'junegunn/vim-easy-align'
@@ -70,7 +75,6 @@ Plugin 'guns/xterm-color-table.vim'
 Plugin 'slim-template/vim-slim'
 Plugin 'ngmy/vim-rubocop'
 Plugin 'nanotech/jellybeans.vim'
-Plugin 'd11wtq/ctrlp_bdelete.vim'
 Plugin 'jgdavey/vim-blockle.git'
 Plugin 'vim-scripts/closetag.vim'
 Plugin 'thoughtbot/vim-rspec'
@@ -98,7 +102,20 @@ call vundle#end()
 " CtrlP Delete
 call ctrlp_bdelete#init()
 
-" let base16colorspace=256  " Access colors present in 256 colorspace
+"CtrlP Funky
+let g:ctrlp_extensions = ['funky']
+
+" User the silver searcher instead of grep
+if executable('ag')
+  " Use ag over grep
+  set grepprg=ag\ --nogroup\ --nocolor\ --literal
+
+  " Use ag in CtrlP for listing files. Lightning fast and respects .gitignore
+  let g:ctrlp_user_command = 'ag %s -l --nocolor --hidden -g ""'
+
+  " ag is fast enough that CtrlP doesn't need to cache
+  let g:ctrlp_use_caching = 0
+endif
 
 " Toggle NERDTree
 let g:NERDTreeIgnore = ['images$[[dir]]', 'bin$[[dir]]', 'script$[[dir]]', 'logs\?$[[dir]]', 'tmp$[[dir]]', 'doc$[[dir]]', 'coverage$[[dir]]', 'sublime-project$[[file]]']
@@ -117,38 +134,37 @@ nnoremap <Leader>. :NERDTreeFind<CR>
 
 " RSpec.vim mappings
 "let g:rspec_command = "!rspec {spec}"
-let g:rspec_command = "!spring rspec {spec}"
+let g:rspec_runner = "os_x_iterm"
+let g:rspec_command = "spring rspec {spec}"
 nnoremap <Leader>t :call RunCurrentSpecFile()<CR>
 nnoremap <Leader>S :call RunNearestSpec()<CR>
 nnoremap <Leader>s :call RunLastSpec()<CR>
 
 " bind K to grep word under cursor
-nnoremap K :Ag! "\b<C-R><C-W>\b"<CR>
+nnoremap K :grep! "\b<C-R><C-W>\b"<CR>
 " delete buffer
 nnoremap <silent><leader>d :bp\|bd #<CR>
 nnoremap <silent><leader>D :bd<CR>
 
-" emacs like movement on command line
-cnoremap <c-f> <right>
-cnoremap <c-b> <left>
-cnoremap <c-e> <end>
-cnoremap <c-a> <home>
-cnoremap <c-d> <del>
-
 " fugitive git bindings
-nnoremap <space>ga :Git add %:p<CR><CR>
-nnoremap <space>gs :Gstatus<CR>
-nnoremap <space>gc :Gcommit -v -q<CR>
-nnoremap <space>gt :Gcommit -v -q %:p<CR>
-nnoremap <space>gd :Gdiff<CR>
-nnoremap <space>ge :Gedit<CR>
-nnoremap <space>gr :Gread<CR>
-nnoremap <space>gw :Gwrite<CR><CR>
-nnoremap <space>gl :silent! Glog<CR>:bot copen<CR>
-nnoremap <space>gb :Git branch<Space>
-nnoremap <space>go :Git checkout<Space>
-nnoremap <space>gps :Dispatch! git push<CR>
-nnoremap <space>gpl :Dispatch! git pull<CR>
+nnoremap <leader>ga :Git add %:p<CR><CR>
+nnoremap <leader>gs :Gstatus<CR>
+nnoremap <leader>gc :Gcommit -v -q<CR>
+nnoremap <leader>gt :Gcommit -v -q %:p<CR>
+nnoremap <leader>gd :Gdiff<CR>
+nnoremap <leader>ge :Gedit<CR>
+nnoremap <leader>gr :Gread<CR>
+nnoremap <leader>gw :Gwrite<CR><CR>
+nnoremap <leader>gl :silent! Glog<CR>:bot copen<CR>
+nnoremap <leader>gb :Git branch<leader>
+nnoremap <leader>go :Git checkout<leader>
+nnoremap <leader>gps :Dispatch! git push<CR>
+nnoremap <leader>gpl :Dispatch! git pull<CR>
+nnoremap <leader>dgr :diffget REMOTE\|:diffupdate<CR>
+nnoremap <leader>dgl :diffget LOCAL<CR>
+nnoremap <leader>dpr :diffput REMOTE<CR>
+nnoremap <leader>dpl :diffput LOCAL<CR>
+nnoremap <leader>du :diffupdate<cr> 
 
 " Rubocop
 let g:vimrubocop_config = '~/.rubocop.yml'
@@ -215,10 +231,11 @@ let g:netrw_liststyle=3
 set listchars=tab:▸\ ,trail:·,eol:¬,nbsp:_,extends:❯,precedes:❮
 
 " Syntax coloring lines that are too long just slows down the world
-set synmaxcol=128
+set synmaxcol=1200
 
 " Settings for the gui version
-set guifont=Monaco:h13
+set guifont=Inconsolata:h16
+set guioptions=egm
 
 " ERB tags for surround
 let g:surround_45 = "<% \r %>"
@@ -340,6 +357,8 @@ cnoreabbrev Q q
 " http://vimcasts.org/e/14
 cnoremap %% <C-R>=expand('%')<cr>
 
+autocmd Filetype gitcommit setlocal spell textwidth=72
+
 " =============================================================================
 " Filetypes and Custom Autocmds
 " =============================================================================
@@ -428,6 +447,7 @@ set wildignore+=*.swp,*~,._*
 
 " CtrlP
 hi def link CtrlPMatch CursorLine
+let g:ctrlp_map = ''
 let g:ctrlp_working_path_mode = 0
 let g:ctrlp_clear_cache_on_exit = 0
 let g:ctrlp_switch_buffer = 'Et'
@@ -435,6 +455,9 @@ let g:ctrlp_custom_ignore = {
   \ 'dir':  '\.git\|node_modules\|bin\|\.hg\|\.svn\|build\|log\|resources\|coverage\|doc\|tmp\|public/assets\|vendor\|Android',
   \ 'file': '\.jpg$\|\.exe$\|\.so$\|tags$\|\.dll$'
   \ }
+nnoremap <leader>ff :CtrlP<cr>
+nnoremap <leader>fb :CtrlPBuffer<cr>
+nnoremap <leader>fm :CtrlPFunky<cr>
 
 " Will allow you to use :w!! to write to a file using sudo if you
 " forgot to sudo vim file (it will prompt for sudo password when writing)
@@ -452,7 +475,8 @@ nnoremap <C-c> :bd<cr>
 vnoremap < <gv
 vnoremap > >gv
 
-nnoremap <leader>a :Ag! 
+command! -nargs=+ NewGrep execute 'silent grep! <args>' | copen 42
+nnoremap <leader>a :NewGrep 
 
 nnoremap <TAB> :bnext<CR>
 nnoremap <S-TAB> :bprev<CR>
@@ -466,7 +490,6 @@ nnoremap <C-l> <C-w>l
 nnoremap <leader><leader> :b#<cr>
 nnoremap <leader>V :e $MYVIMRC<cr>
 
-nnoremap <C-b> :CtrlPBuffer<cr>
 nnoremap <D-1> 1gt
 nnoremap <D-2> 2gt
 nnoremap <D-3> 3gt
