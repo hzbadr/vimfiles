@@ -10,13 +10,13 @@ set nocompatible
 " Don't show mode
 set noshowmode
 
+set nonumber
+
 " Enable file type detection and load plugin indent files
 filetype plugin on
-filetype plugin indent on
+filetype indent on
 
 " Load plugins with Pathogen
-"runtime core/pathogen/autoload/pathogen.vim
-"execute pathogen#infect('colors/{}', 'langs/{}', 'tools/{}')
 execute pathogen#infect()
 
 " enable per-project .vimrc files
@@ -57,31 +57,30 @@ Plugin 'tpope/vim-vinegar'
 Plugin 'tpope/vim-unimpaired'
 Plugin 'tpope/vim-speeddating'
 Plugin 'tpope/vim-rsi'
+Plugin 'tpope/vim-projectionist'
 Plugin 'stefanoverna/vim-i18n'
+Plugin 'szw/vim-tags'
 Plugin 'vim-ruby/vim-ruby'
 Plugin 'danchoi/ri.vim'
 Plugin 'kien/ctrlp.vim'
 Plugin 'd11wtq/ctrlp_bdelete.vim'
 Plugin 'tacahiroy/ctrlp-funky'
 Plugin 'mileszs/ack.vim'
-Plugin 'scrooloose/syntastic'
 Plugin 'junegunn/vim-easy-align'
 Plugin 'chriskempson/vim-tomorrow-theme'
+Plugin 'christoomey/vim-tmux-runner'
+Plugin 'gabebw/vim-spec-runner'
 Plugin 'marcweber/vim-addon-mw-utils'
 Plugin 'tomtom/tlib_vim'
 Plugin 'wellle/targets.vim'
 Plugin 'vim-scripts/SyntaxAttr.vim'
 Plugin 'guns/xterm-color-table.vim'
 Plugin 'slim-template/vim-slim'
-Plugin 'ngmy/vim-rubocop'
 Plugin 'nanotech/jellybeans.vim'
 Plugin 'jgdavey/vim-blockle.git'
 Plugin 'vim-scripts/closetag.vim'
-Plugin 'thoughtbot/vim-rspec'
 Plugin 'tommcdo/vim-exchange'
 Plugin 'AndrewRadev/switch.vim'
-Plugin 'christoomey/vim-tmux-navigator'
-Plugin 'rking/ag.vim'
 Plugin 'mattn/gist-vim'
 Plugin 'mattn/webapi-vim'
 Plugin 'tpope/vim-abolish'
@@ -90,96 +89,41 @@ Plugin 'gregsexton/gitv'
 Plugin 'gabrielelana/vim-markdown'
 Plugin 'henrik/vim-indexed-search'
 Plugin 'vim-scripts/LargeFile'
-Plugin 'scrooloose/nerdtree'
 Plugin 'skwp/greplace.vim'
 Plugin 'chriskempson/base16-vim'
 Plugin 'AndrewRadev/splitjoin.vim'
+Plugin 'avakhov/vim-yaml'
+Plugin 'idanarye/vim-merginal'
+Plugin 'mustache/vim-mustache-handlebars'
+Plugin 'godlygeek/tabular'
 
 " All of your Plugins must be added before the following line
 call vundle#end()
 
-
 " CtrlP Delete
 call ctrlp_bdelete#init()
-
-"CtrlP Funky
+" CtrlP Funky
 let g:ctrlp_extensions = ['funky']
+let g:ctrlp_funky_multi_buffers = 1
 
-" User the silver searcher instead of grep
-if executable('ag')
-  " Use ag over grep
-  set grepprg=ag\ --nogroup\ --nocolor\ --literal
+" Disable tag generation on file save
+let g:vim_tags_auto_generate = 0
 
-  " Use ag in CtrlP for listing files. Lightning fast and respects .gitignore
-  let g:ctrlp_user_command = 'ag %s -l --nocolor --hidden -g ""'
+" Vim tmux runner
+let g:VtrUseVtrMaps = 0
+" Vim spec runner
+let g:spec_runner_dispatcher = 'call VtrSendCommand("{command}")'
+map <Leader>tf <Plug>RunCurrentSpecFile
+map <Leader>tt <Plug>RunFocusedSpec
+map <Leader>tl <Plug>RunMostRecentSpec
 
-  " ag is fast enough that CtrlP doesn't need to cache
-  let g:ctrlp_use_caching = 0
-endif
-
-" Toggle NERDTree
-let g:NERDTreeIgnore = ['images$[[dir]]', 'bin$[[dir]]', 'script$[[dir]]', 'logs\?$[[dir]]', 'tmp$[[dir]]', 'doc$[[dir]]', 'coverage$[[dir]]', 'sublime-project$[[file]]']
-let g:NERDTreeMinimalUI = 1
-let g:NERDTreeAutoDeleteBuffer = 1
-nnoremap <Leader>, :NERDTreeToggle<CR>
-nnoremap <Leader>. :NERDTreeFind<CR>
-" if isdirectory(argv(0))
-"   bd
-"   autocmd vimenter * exe "cd" argv(0)
-"   autocmd VimEnter * NERDTree
-" endif
-
-" Define a mapping that runs the current cucumber
-:nn <expr> <Leader>C ":nn <lt>Leader>cu :!cucumber <lt>C-R>=expand('%')<lt>CR>:".input("Line number: ", line('.'))."<lt>CR>"
-
-" RSpec.vim mappings
-"let g:rspec_command = "!rspec {spec}"
-let g:rspec_runner = "os_x_iterm"
-let g:rspec_command = "spring rspec {spec}"
-nnoremap <Leader>t :call RunCurrentSpecFile()<CR>
-nnoremap <Leader>S :call RunNearestSpec()<CR>
-nnoremap <Leader>s :call RunLastSpec()<CR>
-
-" bind K to grep word under cursor
-nnoremap K :grep! "\b<C-R><C-W>\b"<CR>
 " delete buffer
-nnoremap <silent><leader>d :bp\|bd #<CR>
-nnoremap <silent><leader>D :bd<CR>
+nnoremap <C-c> :bnext\|bdelete #<CR>
 
-" fugitive git bindings
-nnoremap <leader>ga :Git add %:p<CR><CR>
-nnoremap <leader>gs :Gstatus<CR>
-nnoremap <leader>gc :Gcommit -v -q<CR>
-nnoremap <leader>gt :Gcommit -v -q %:p<CR>
-nnoremap <leader>gd :Gdiff<CR>
-nnoremap <leader>ge :Gedit<CR>
-nnoremap <leader>gr :Gread<CR>
-nnoremap <leader>gw :Gwrite<CR><CR>
-nnoremap <leader>gl :silent! Glog<CR>:bot copen<CR>
-nnoremap <leader>gb :Git branch<leader>
-nnoremap <leader>go :Git checkout<leader>
-nnoremap <leader>gps :Dispatch! git push<CR>
-nnoremap <leader>gpl :Dispatch! git pull<CR>
-nnoremap <leader>dgr :diffget REMOTE\|:diffupdate<CR>
-nnoremap <leader>dgl :diffget LOCAL<CR>
-nnoremap <leader>dpr :diffput REMOTE<CR>
-nnoremap <leader>dpl :diffput LOCAL<CR>
-nnoremap <leader>du :diffupdate<cr> 
-
-" Rubocop
-let g:vimrubocop_config = '~/.rubocop.yml'
-let g:vimrubocop_keymap = 0
-
-" Syntastic
-let g:syntastic_ruby_checkers = ['mri', 'rubocop']
-" Use a nicer error sign
-let g:syntastic_error_symbol = '→'
-let g:syntastic_warning_symbol = '•'
-let g:syntastic_style_error_symbol = '›'
-let g:syntastic_style_warning_symbol = '›'
-let g:syntastic_mode_map = { "mode": "passive",
-      \ "active_filetypes": [],
-      \ "passive_filetypes": [] }
+" Directory list style
+let g:netrw_liststyle = 0
+" Netrw ignored files and folders
+" let g:netrw_list_hide += '^\.*$'
 
 " Don't map rubyhash keys
 let g:rubyhash_map_keys = 0
@@ -190,64 +134,23 @@ let g:ruby_refactoring_map_keys=0
 " Intent private methods
 let g:ruby_indent_access_modifier_style = 'outdent'
 
-
 " UltiSnips
 let g:UltiSnipsSnippetDirectories=["UltiSnips"]
-
-" Rtags
-let g:rails_ctags_arguments = ['--languages=-javascript']
-
-" Regenerate ctags
-nnoremap <Leader>ct :!ctags --extra=+f --exclude=.git --exclude=log --exclude=doc -R * `rvm gemdir`/gems/*<CR><CR>
-nnoremap <Leader>cc :SyntasticCheck<cr>
-
-" Rename current file
-function! RenameFile()
-  let old_name = expand('%')
-  let new_name = input('New file name: ', expand('%'), 'file')
-  if new_name != '' && new_name != old_name
-    exec ':saveas ' . new_name
-    exec ':silent !rm ' . old_name
-    redraw!
-  endif
-endfunction
-nnoremap <leader>R :call RenameFile()<cr>
 
 " Use UTF-8 without BOM
 set encoding=utf-8 nobomb
 
-" Clear PAGER if Vim's Man function is needed
-let $PAGER=''
-
 " Get rid of ex-mode
 nnoremap Q <nop>
 
-" Directory list style
-let g:netrw_liststyle=3
-
 " Invisible characters
-"set listchars=tab:▸\ ,nbsp:_
-"set listchars=tab:\ \ ,trail:·,eol:¬,nbsp:_,extends:❯,precedes:❮
 set listchars=tab:▸\ ,trail:·,eol:¬,nbsp:_,extends:❯,precedes:❮
 
 " Syntax coloring lines that are too long just slows down the world
 set synmaxcol=1200
 
-" Settings for the gui version
-set guifont=Inconsolata:h16
-set guioptions=egm
-
-" ERB tags for surround
-let g:surround_45 = "<% \r %>"
-let g:surround_61 = "<%= \r %>"
-
 " Use only 1 space after "." when joining lines instead of 2
 set nojoinspaces
-
-" Delete comment character when joining commented lines
-if v:version > 703 || v:version == 703 && has("patch541")
-  set formatoptions+=j     
-endif
 
 " Don't reset cursor to start of line when moving around
 set nostartofline
@@ -258,33 +161,33 @@ autocmd FileType css,scss set iskeyword=@,48-57,_,-,?,!,192-255
 autocmd FileType eruby set iskeyword=@,48-57,_,192-255,$,-
 
 set background=dark
-" colorscheme jellybeans
-" colorscheme base16-default
 colorscheme railscasts
 
 " Make those debugger statements painfully obvious
 au BufEnter *.rb syn match error contained "\<binding.pry\>"
 au BufEnter *.rb syn match error contained "\<debugger\>"
 
-"" Always show the file name
-set modeline
+syntax enable
+syntax sync fromstart
+
 set hlsearch                    " highlight the search
-set ls=2
-"set cursorline                  " highlight current line
-set ttyfast                     " improves redrawing for newer computers
+set ls=2                        " show a status line even if there's only one window
+
+" Improve vim's scrolling speed
+set ttyfast
 set ttyscroll=3
-set lazyredraw                  " to avoid scrolling problems
+set lazyredraw
+
 set wildmenu                    " show completion on the modeline
-set linespace=0
+set linespace=0                 " number of pixels between the lines
 set splitright                  " open vertical splits on the right
 set splitbelow                  " open the horizontal split below
 set wrap                        " wrap long lines
 set linebreak                   " break lines at word end
-set nobackup                    " no backup files
-set nowritebackup               " only in case you don't want a backup file while editing
+set nobackup                    " don't want no backup files
+set nowritebackup               " don't make a backup before overwriting a file
 set noswapfile                  " no swap files
-set backupdir=~/tmp
-set hidden
+set hidden                      " hide buffers when abandoned
 
 " Time out on key codes but not mappings
 set notimeout
@@ -298,28 +201,28 @@ set autoread
 set foldmethod=indent
 set foldlevel=1
 set foldnestmax=10
-set nofoldenable                " disable folding
+" Open all folds by default
+set nofoldenable
+
 set undofile                    " Save undo's after file closes
 set undodir=~/.vim/undo         " where to save undo histories
 set undolevels=1000             " How many undos
 set undoreload=10000            " number of lines to save for undo
+
 set vb                          " disable alert sound
-syntax enable
-syntax sync fromstart
 set showcmd                     " display incomplete commands
 set history=100                 " a ton of history
-"set colorcolumn=80              " show a column at 80 characters
 
 " Default shell and shell syntax and source ~/.bash_profile
 set shell=/bin/bash\ --login
 let g:is_bash=1
 
-"" Whitespace
+" Whitespace
 set tabstop=2 shiftwidth=2      " a tab is two spaces
 set expandtab                   " use spaces, not tabs
 set backspace=indent,eol,start  " backspace through everything in insert mode
 
-"" Searching
+" Searching
 set incsearch                   " incremental searching
 set ignorecase                  " searches are case insensitive...
 set smartcase                   " ... unless they contain at least one capital letter
@@ -328,24 +231,15 @@ set scrolloff=0                 " keep a 5 line padding when moving the cursor
 set autoindent                  " indent on enter
 set smartindent                 " do smart indenting when starting a new line
 set shiftround                  " indent to the closest shiftwidth
-"set switchbuf=useopen,usetab   " move focus to where the buffer is
-set switchbuf=""                  " do not move focus
 
+set switchbuf=""                " do not move focus/cursor to where the buffer is already open
 set tagbsearch                  " use binary searching for tags
 
 " The "Press ENTER or type command to continue" prompt is jarring and usually unnecessary.
-" You can shorten command-line text and other info tokens with, e.g.:
 set shortmess=atI
 
 " remove search highlighting
 nnoremap <leader>h :noh<cr>
-
-" Set <c-n> and <c-p> to act like Up/Down so will filter command history
-cnoremap <c-p> <up>
-cnoremap <c-n> <down>
-
-" <c-a> jumps to beginning of line to match <c-e>
-cnoremap <c-a> <home>
 
 " C-c send enter in insert mode
 inoremap <C-c> <Esc>
@@ -357,6 +251,7 @@ cnoreabbrev Q q
 " http://vimcasts.org/e/14
 cnoremap %% <C-R>=expand('%')<cr>
 
+" Limit commit message width and check spelling
 autocmd Filetype gitcommit setlocal spell textwidth=72
 
 " =============================================================================
@@ -398,9 +293,7 @@ if has("statusline") && !&cp
   " Default status line
   set statusline=%y\ %<%f\ %h%m%r%=%-16.(line\ %l\ of\ %L%)
   set statusline+=%#warningmsg#
-  set statusline+=%{SyntasticStatuslineFlag()}
   set statusline+=%*
-  " set statusline=%<\ %n:%f\ %m%r%y%{SyntasticStatuslineFlag()}%=line:\ %l\ of\ %L,\ col:\ %c%V,\ 
   " format markers:
   "   %< truncation point
   "   %n buffer number
@@ -418,7 +311,8 @@ if has("statusline") && !&cp
   "   %) end of width specification
 endif
 
-" Show options
+" Complete till longest common string.
+" When more than one match exists, list them all.
 set wildmode=longest,list
 
 " Disable output and VCS files
@@ -445,19 +339,18 @@ set wildignore+=node_modules/*
 " Disable temp and backup files
 set wildignore+=*.swp,*~,._*
 
+" Disable osx index files
+set wildignore+=.DS_Store
+
 " CtrlP
 hi def link CtrlPMatch CursorLine
-let g:ctrlp_map = ''
-let g:ctrlp_working_path_mode = 0
 let g:ctrlp_clear_cache_on_exit = 0
 let g:ctrlp_switch_buffer = 'Et'
 let g:ctrlp_custom_ignore = {
   \ 'dir':  '\.git\|node_modules\|bin\|\.hg\|\.svn\|build\|log\|resources\|coverage\|doc\|tmp\|public/assets\|vendor\|Android',
   \ 'file': '\.jpg$\|\.exe$\|\.so$\|tags$\|\.dll$'
   \ }
-nnoremap <leader>ff :CtrlP<cr>
-nnoremap <leader>fb :CtrlPBuffer<cr>
-nnoremap <leader>fm :CtrlPFunky<cr>
+nnoremap <C-b> :CtrlPBuffer<cr>
 
 " Will allow you to use :w!! to write to a file using sudo if you
 " forgot to sudo vim file (it will prompt for sudo password when writing)
@@ -468,18 +361,10 @@ nnoremap gV `[v`]
 " selelct what you've just pasted
 nnoremap gp `[v`]
 
-" close the buffer but not it's window
-nnoremap <C-c> :bd<cr>
-
 " reselect visual block after indent/outdent
 vnoremap < <gv
 vnoremap > >gv
 
-command! -nargs=+ NewGrep execute 'silent grep! <args>' | copen 42
-nnoremap <leader>a :NewGrep 
-
-nnoremap <TAB> :bnext<CR>
-nnoremap <S-TAB> :bprev<CR>
 
 " Move between splits
 nnoremap <C-h> <C-w>h
@@ -489,24 +374,6 @@ nnoremap <C-l> <C-w>l
 
 nnoremap <leader><leader> :b#<cr>
 nnoremap <leader>V :e $MYVIMRC<cr>
-
-nnoremap <D-1> 1gt
-nnoremap <D-2> 2gt
-nnoremap <D-3> 3gt
-nnoremap <D-4> 4gt
-nnoremap <D-5> 5gt
-nnoremap <D-6> 6gt
-nnoremap <D-7> 7gt
-nnoremap <D-8> 8gt
-nnoremap <D-9> 9gt
-nnoremap <D-0> :tablast<CR>
-
-nnoremap <leader>F :e <C-R>=expand('%:h').'/'<CR>
-
-" Fix the difficult-to-read default setting for diff text highlighting.  The
-" bang (!) is required since we are overwriting the DiffText setting. The highlighting
-" for "Todo" also looks nice (yellow) if you don't like the "MatchParen" colors.
-" highlight! link DiffText MatchParen
 
 " clear those nasty fugitive buffers
 autocmd BufReadPost fugitive://* set bufhidden=delete
@@ -522,7 +389,6 @@ endfunction
 
 " tmux will only forward escape sequences to the terminal if surrounded by a DCS sequence
 " http://sourceforge.net/mailarchive/forum.php?thread_name=AANLkTinkbdoZ8eNR1X2UobLTeww1jFrvfJxTMfKSq-L%2B%40mail.gmail.com&forum_name=tmux-users
- 
 if exists('$TMUX')
   let &t_SI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=1\x7\<Esc>\\"
   let &t_EI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=0\x7\<Esc>\\"
@@ -537,10 +403,6 @@ endif
 " highlight DiffText cterm=bold ctermfg=010 ctermbg=bg gui=none guifg=#00f00 guibg=#87d700
 
 highlight SignColumn term=standout ctermfg=242 ctermbg=bg guifg=#777777 guibg=bg
-
-nnoremap <leader>r :redraw!<CR>
-nnoremap <leader>q :bd<CR>
-nnoremap <leader>w :%s/^\s\+$//g<CR>
 
 " look for the tags file in every gem
 autocmd FileType ruby let &l:tags = pathogen#legacyjoin(pathogen#uniq(
@@ -562,3 +424,5 @@ function! QuickfixFilenames()
   return join(map(values(buffer_numbers), 'fnameescape(v:val)'))
 endfunction
 
+" Tell vim to resize itself (especially useful with tmux splits)
+autocmd VimResized * :wincmd =
