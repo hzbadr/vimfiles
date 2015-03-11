@@ -241,6 +241,11 @@ nnoremap <leader>h :noh<cr>
 " C-c send enter in insert mode
 inoremap <C-c> <Esc>
 
+" Search word under cursor
+noremap K :Ack <cword><cr>
+" Fire up Ack
+noremap <leader>a :Ack 
+
 cnoreabbrev W w
 cnoreabbrev Q q
 
