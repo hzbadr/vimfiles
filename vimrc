@@ -16,9 +16,6 @@ set nonumber
 filetype plugin on
 filetype indent on
 
-" Load plugins with Pathogen
-execute pathogen#infect()
-
 " enable per-project .vimrc files
 set exrc
 " Only execute safe per-project vimrc commands
@@ -403,11 +400,6 @@ endif
 " highlight DiffText cterm=bold ctermfg=010 ctermbg=bg gui=none guifg=#00f00 guibg=#87d700
 
 highlight SignColumn term=standout ctermfg=242 ctermbg=bg guifg=#777777 guibg=bg
-
-" look for the tags file in every gem
-autocmd FileType ruby let &l:tags = pathogen#legacyjoin(pathogen#uniq(
-      \ pathogen#split(&tags) +
-      \ map(split($GEM_PATH,':'),'v:val."/gems/*/tags"')))
 
 " Auto save contents of a buffer when you lose focus
 autocmd BufLeave,FocusLost * silent! update
