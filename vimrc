@@ -125,7 +125,7 @@ map <leader>jC :let g:ctrlp_default_input = 'config/'<cr>:CtrlP<cr>
 map <leader>jm :let g:ctrlp_default_input = 'app/models/'<cr>:CtrlP<cr>
 map <leader>jh :let g:ctrlp_default_input = 'app/helpers/'<cr>:CtrlP<cr>
 map <leader>jl :let g:ctrlp_default_input = 'lib/'<cr>:CtrlP<cr>
-map <leader>js :let g:ctrlp_default_input = 'app/assets/stylesheets/'<cr>:CtrlP<cr>
+map <leader>jS :let g:ctrlp_default_input = 'app/assets/stylesheets/'<cr>:CtrlP<cr>
 map <leader>jj :let g:ctrlp_default_input = 'app/assets/javascripts/'<cr>:CtrlP<cr>
 map <leader>jk :let g:ctrlp_default_input = 'features/'<cr>:CtrlP<cr>
 map <leader>js :let g:ctrlp_default_input = 'spec/'<cr>:CtrlP<cr>
@@ -179,7 +179,7 @@ nnoremap Q <nop>
 set listchars=tab:▸\ ,trail:·,eol:¬,nbsp:_,extends:❯,precedes:❮
 
 " Syntax coloring lines that are too long just slows down the world
-set synmaxcol=1200
+set synmaxcol=128
 
 " Use only 1 space after "." when joining lines instead of 2
 set nojoinspaces
@@ -210,7 +210,7 @@ set ls=2                        " show a status line even if there's only one wi
 " Improve vim's scrolling speed
 set ttyfast
 set ttyscroll=3
-" set lazyredraw
+set lazyredraw
 
 set wildmenu                    " show completion on the modeline
 set linespace=0                 " number of pixels between the lines
