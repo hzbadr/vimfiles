@@ -12,10 +12,6 @@ set noshowmode
 
 set nonumber
 
-" Enable file type detection and load plugin indent files
-filetype plugin on
-filetype indent on
-
 " enable per-project .vimrc files
 set exrc
 " Only execute safe per-project vimrc commands
@@ -58,7 +54,6 @@ Plugin 'tpope/vim-projectionist'
 Plugin 'stefanoverna/vim-i18n'
 Plugin 'szw/vim-tags'
 Plugin 'vim-ruby/vim-ruby'
-Plugin 'danchoi/ri.vim'
 Plugin 'kien/ctrlp.vim'
 Plugin 'd11wtq/ctrlp_bdelete.vim'
 Plugin 'tacahiroy/ctrlp-funky'
@@ -66,7 +61,7 @@ Plugin 'mileszs/ack.vim'
 Plugin 'junegunn/vim-easy-align'
 Plugin 'chriskempson/vim-tomorrow-theme'
 Plugin 'christoomey/vim-tmux-runner'
-Plugin 'gabebw/vim-spec-runner'
+Plugin 'thoughtbot/vim-rspec'
 Plugin 'marcweber/vim-addon-mw-utils'
 Plugin 'tomtom/tlib_vim'
 Plugin 'wellle/targets.vim'
@@ -93,6 +88,18 @@ Plugin 'avakhov/vim-yaml'
 Plugin 'idanarye/vim-merginal'
 Plugin 'mustache/vim-mustache-handlebars'
 Plugin 'godlygeek/tabular'
+Plugin 'jgdavey/tslime.vim'
+
+command! -nargs=1 Silent
+\ | execute ':silent !'.<q-args>
+\ | execute ':redraw!'
+
+" Fugitive
+nnoremap <leader>gs :Gstatus<cr>
+nnoremap <leader>gd :Silent git diff %<cr>
+nnoremap <leader>gl :silent! Glog<cr>:bot copen<cr>
+" clear those nasty fugitive buffers
+autocmd BufReadPost fugitive://* set bufhidden=delete
 
 " All of your Plugins must be added before the following line
 call vundle#end()
@@ -103,19 +110,47 @@ call ctrlp_bdelete#init()
 let g:ctrlp_extensions = ['funky']
 let g:ctrlp_funky_multi_buffers = 1
 
+" CtrlP
+hi def link CtrlPMatch CursorLine
+let g:ctrlp_clear_cache_on_exit = 0
+let g:ctrlp_switch_buffer = 'Et'
+let g:ctrlp_custom_ignore = {
+  \ 'dir':  '\.git\|node_modules\|bin\|\.hg\|\.svn\|build\|log\|resources\|coverage\|doc\|tmp\|public/assets\|vendor\|Android',
+  \ 'file': '\.jpg$\|\.exe$\|\.so$\|tags$\|\.dll$'
+  \ }
+
+map <leader>jv :let g:ctrlp_default_input = 'app/views/'<cr>:CtrlP<cr>
+map <leader>jc :let g:ctrlp_default_input = 'app/controllers/'<cr>:CtrlP<cr>
+map <leader>jC :let g:ctrlp_default_input = 'config/'<cr>:CtrlP<cr>
+map <leader>jm :let g:ctrlp_default_input = 'app/models/'<cr>:CtrlP<cr>
+map <leader>jh :let g:ctrlp_default_input = 'app/helpers/'<cr>:CtrlP<cr>
+map <leader>jl :let g:ctrlp_default_input = 'lib/'<cr>:CtrlP<cr>
+map <leader>js :let g:ctrlp_default_input = 'app/assets/stylesheets/'<cr>:CtrlP<cr>
+map <leader>jj :let g:ctrlp_default_input = 'app/assets/javascripts/'<cr>:CtrlP<cr>
+map <leader>jk :let g:ctrlp_default_input = 'features/'<cr>:CtrlP<cr>
+map <leader>js :let g:ctrlp_default_input = 'spec/'<cr>:CtrlP<cr>
+map <leader>jf :let g:ctrlp_default_input = 0<cr>:CtrlP<cr>
+map <leader>jF :let g:ctrlp_default_input = 0<cr>:CtrlPFunky<cr>
+map <leader>jb :let g:ctrlp_default_input = 0<cr>:CtrlPBuffer<cr>
+map <leader>jL :let g:ctrlp_default_input = 0<cr>:CtrlPLine<cr>
+
 " Disable tag generation on file save
 let g:vim_tags_auto_generate = 0
 
-" Vim tmux runner
-let g:VtrUseVtrMaps = 0
-" Vim spec runner
-let g:spec_runner_dispatcher = 'call VtrSendCommand("{command}")'
-map <Leader>tf <Plug>RunCurrentSpecFile
-map <Leader>tt <Plug>RunFocusedSpec
-map <Leader>tl <Plug>RunMostRecentSpec
+" Enable file type detection and load plugin indent files
+filetype plugin on
+filetype plugin indent on
+
+let g:rspec_command = "!spring rspec {spec}"
+nnoremap <leader>tf :call RunCurrentSpecFile()<CR>
+nnoremap <leader>tt :call RunNearestSpec()<CR>
+nnoremap <leader>tl :call RunLastSpec()<CR>
 
 " delete buffer
-nnoremap <C-c> :bnext\|bdelete #<CR>
+nnoremap <C-c> :b#\|bwipeout #<CR>
+
+nnoremap <TAB> :bn<cr>
+nnoremap <S-TAB> :bp<cr>
 
 " Directory list style
 let g:netrw_liststyle = 0
@@ -159,6 +194,8 @@ autocmd FileType eruby set iskeyword=@,48-57,_,192-255,$,-
 
 set background=dark
 colorscheme railscasts
+highlight clear SignColumn
+highlight SignColumn term=standout ctermfg=242 ctermbg=bg guifg=#777777 guibg=bg
 
 " Make those debugger statements painfully obvious
 au BufEnter *.rb syn match error contained "\<binding.pry\>"
@@ -173,7 +210,7 @@ set ls=2                        " show a status line even if there's only one wi
 " Improve vim's scrolling speed
 set ttyfast
 set ttyscroll=3
-set lazyredraw
+" set lazyredraw
 
 set wildmenu                    " show completion on the modeline
 set linespace=0                 " number of pixels between the lines
@@ -242,9 +279,9 @@ nnoremap <leader>h :noh<cr>
 inoremap <C-c> <Esc>
 
 " Search word under cursor
-noremap K :Ack <cword><cr>
+nnoremap K :Ack <cword><cr>
 " Fire up Ack
-noremap <leader>a :Ack 
+nnoremap <leader>a :Ack 
 
 cnoreabbrev W w
 cnoreabbrev Q q
@@ -344,16 +381,6 @@ set wildignore+=*.swp,*~,._*
 " Disable osx index files
 set wildignore+=.DS_Store
 
-" CtrlP
-hi def link CtrlPMatch CursorLine
-let g:ctrlp_clear_cache_on_exit = 0
-let g:ctrlp_switch_buffer = 'Et'
-let g:ctrlp_custom_ignore = {
-  \ 'dir':  '\.git\|node_modules\|bin\|\.hg\|\.svn\|build\|log\|resources\|coverage\|doc\|tmp\|public/assets\|vendor\|Android',
-  \ 'file': '\.jpg$\|\.exe$\|\.so$\|tags$\|\.dll$'
-  \ }
-nnoremap <C-b> :CtrlPBuffer<cr>
-
 " Will allow you to use :w!! to write to a file using sudo if you
 " forgot to sudo vim file (it will prompt for sudo password when writing)
 cnoremap w!! %!sudo tee > /dev/null %
@@ -376,9 +403,6 @@ nnoremap <C-l> <C-w>l
 
 nnoremap <leader><leader> :b#<cr>
 nnoremap <leader>V :e $MYVIMRC<cr>
-
-" clear those nasty fugitive buffers
-autocmd BufReadPost fugitive://* set bufhidden=delete
 
 " set haml filetype on weird extensions
 autocmd BufRead,BufNewFile *.hamljs set filetype=haml
@@ -404,7 +428,6 @@ endif
 " highlight DiffChange cterm=none ctermfg=217 ctermbg=bg gui=none guifg=fg guibg=#878700
 " highlight DiffText cterm=bold ctermfg=010 ctermbg=bg gui=none guifg=#00f00 guibg=#87d700
 
-highlight SignColumn term=standout ctermfg=242 ctermbg=bg guifg=#777777 guibg=bg
 
 " Auto save contents of a buffer when you lose focus
 autocmd BufLeave,FocusLost * silent! update
