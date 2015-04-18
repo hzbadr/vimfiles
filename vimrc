@@ -479,3 +479,4 @@ autocmd VimResized * :wincmd =
 
 :set relativenumber
 au VimEnter *  NERDTree
+autocmd VimEnter * wincmd p
