@@ -219,11 +219,13 @@ autocmd FileType css,scss set iskeyword=@,48-57,_,-,?,!,192-255
 "" Add the '-' as a keyword in erb files
 autocmd FileType eruby set iskeyword=@,48-57,_,192-255,$,-
 
-let g:molokai_original = 1
-let g:rehash256 = 1
-set background=dark
-" colorscheme codeschool
-highlight clear SignColumn
+if $COLORTERM == 'gnome-terminal'
+  set term=gnome-256color
+  colorscheme railscasts
+else
+  colorscheme default
+endif
+
 
 " Make those debugger statements painfully obvious
 au BufEnter *.rb syn match error contained "\<binding.pry\>"
@@ -476,3 +478,4 @@ endfunction
 autocmd VimResized * :wincmd =
 
 :set relativenumber
+au VimEnter *  NERDTree
