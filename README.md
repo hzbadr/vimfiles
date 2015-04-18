@@ -1,7 +1,9 @@
 This is my vim setup
 ====================
 
-== Plugins
+Plugins
+=======
+
 Plugin 'gmarik/vundle'
 
 Plugin 'dockyard/vim-easydir'
