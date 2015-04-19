@@ -39,7 +39,7 @@ Plugin 'gmarik/vundle'
 
 Plugin 'dockyard/vim-easydir'
 Plugin 'ecomba/vim-ruby-refactoring'
-Plugin 'SirVer/ultisnips'
+" Plugin 'SirVer/ultisnips'
 Plugin 'int3/vim-extradite'
 Plugin 'jelera/vim-javascript-syntax'
 Plugin 'kchmck/vim-coffee-script'
@@ -104,6 +104,7 @@ Plugin 'jgdavey/tslime.vim'
 Plugin 'jeffkreeftmeijer/vim-numbertoggle'
 Plugin 'tpope/vim-bundler'
 Plugin 'garbas/vim-snipmate.git'
+Plugin 'honza/vim-snippets'
 
 Plugin 'jistr/vim-nerdtree-tabs.git'
 Plugin 'scrooloose/nerdtree.git'
@@ -194,7 +195,7 @@ let g:ruby_refactoring_map_keys=0
 let g:ruby_indent_access_modifier_style = 'outdent'
 
 " UltiSnips
-let g:UltiSnipsSnippetDirectories=["UltiSnips"]
+"let g:UltiSnipsSnippetDirectories=["UltiSnips"]
 
 " Use UTF-8 without BOM
 set encoding=utf-8 nobomb
